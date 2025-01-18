@@ -1,0 +1,132 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Geospatial Data Science in R",
+    "section": "",
+    "text": "Introduction",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#required-packages",
+    "href": "index.html#required-packages",
+    "title": "Geospatial Data Science in R",
+    "section": "Required packages",
+    "text": "Required packages\nThe following packages may be used during the course; it is assumed that you know how to install packages, and have permission to do so on your computer.\nCRAN packages:\n\ninstall.packages(c(\n\"sf\",\n\"stars\",\n\"terra\",\n\"s2\",\n\"gstat\",\n\"spatstat\",\n\"spdep\",\n\"spatialreg\",\n\"mgcv\"\n))\n\nnon-CRAN packages:\nr-inla: see https://www.r-inla.org/download-install\nstarsdata and spDataLarge:\n\noptions(timeout = 3600) # 1 hr instead of 1 min\ninstall.packages(\"spDataLarge\", repos = \"https://nowosad.github.io/drat/\", \n                 type = \"source\") # 23 Mb\ninstall.packages(\"starsdata\", repos = \"http://cran.uni-muenster.de/pebesma/\", \n                 type = \"source\") # 1 Gb\n\nIntroduction to the course\n\nintroduction of the tutor\nintroduction of course participants, please state\n\nname,\nwhere you’re from,\nwhich program you are in\n\n\nHow we work\nSessions are from 9:00-14:00 CET daily schedule:\n\n9:00 - 10:00 lecture block I\n10:00 - 11:00 exercises I\n11:00 - 12:00 lecture block II\n12:00 - 14:00 exercises II\n\nFurther:\n\nplease raise hands or speak up whenever something comes up\nplease share questions you run into in your actual research, preferably with (example) data and R code\nSyllabus\n\n\nday 1: the new spatial stack in R: simple features, DE-9IM, vector and raster data, data cubes; the spatial statistics data types\n\nday 2 operations, raster-vector, vector-raster: geometry measures, predicates, and transformers spherical geometry raster-vector: polygonizing, extracting vector-raster: rasterize, interpolate, density up- and down-scaling: aggregation, sampling, area-weighted interpolation, dasymetric mapping\n\nday 3. inference: spatial correlation, fitting models: spatial correlation for point patterns, geostatistical data, and lattice data fitting regression models under spatial correlation\n\nday 4 prediction and simulation; point patterns: fitting densities, simulating point patterns geostatistics: kriging interpolation, conditional simulation, simulating GMRFs\nResources\n\n\nSpatial Data Science: With applications in R, by Pebesma and Bivand 2023 (open online, hard copy from CRC)\nVignettes of sf: tab “Articles”\nVignettes of stars: tab “Articles”\nAll these material are written using quarto or R-markdown\n\nReading as preparation: students may want to read from this book chapters: 3-7, 10-12, 14-16",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#why-r-for-spatial-statistics-geospatial-data-science",
+    "href": "index.html#why-r-for-spatial-statistics-geospatial-data-science",
+    "title": "Geospatial Data Science in R",
+    "section": "Why R for spatial statistics / geospatial data science?",
+    "text": "Why R for spatial statistics / geospatial data science?\n\nR is old! Think of the advantages!\nR is as good as any data science language, but is more in focus with the statistical community\nMost researchers in spatial statistics who share code have used or use R\nR has a strong ecosystem of users and developers, who communicate and collaborate (and compete, mostly in a good way)\nR spatial packages have gone full cycle:\n\nthe first generation has been deprecated (rgdal, rgeos, maptools),\nthen removed from CRAN, and\nsuperseded by modern versions (sf and stars replaced sp, terra replaced raster)\n\n\nR is a data science language that allows you to work reproducibly\n\nBecause we have CRAN and CRAN Taskviews: Spatial, SpatioTemporal, Tracking\n\n\nReproducing or recreating the current course\n\nGo to https://github.com/edzer/madrid/\n\nGo to “Code”, then “copy URL to clipboard”\nClone this repo to your hard drive\nStart RStudio by double clickign the madrid.Rproj file in the source directory\nReproduce these course materials by installing quarto and\n\nin RStudio: run build - render book, or\non the command line: run quarto render in the course directory\n\n\nRun individual code sections in RStudio, and modify them!",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#exercises",
+    "href": "index.html#exercises",
+    "title": "Geospatial Data Science in R",
+    "section": "Exercises",
+    "text": "Exercises\n\nInstall the spDataLarge package (see instructions above)\nCopy (or clone) the course material from GitHub to your local machine\nOpen it in RStudio\nOpen the day1.qmd file. Try to identify a code chunk.\nRun the first code chunk.\nSkip to the last code chunk; run all code chunks above it (by a single click), and then run this last code chunk.\nRender the entire course “book”, view the result by opening _book/index.html in a web browser (from Rstudio)",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "day1.html",
+    "href": "day1.html",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "",
+    "text": "Learning goals",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#what-is-special-about-spatial-data",
+    "href": "day1.html#what-is-special-about-spatial-data",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.1 What is special about spatial data?",
+    "text": "1.1 What is special about spatial data?\n\n\nLocation. Does location always involve coordinates? Relative/absolute, qualitative/quantitative\n\nCoordinates. What are coordinates? Dimension(s), unit\n\nTime. If not explicit, there is an implicit time reference. Dimension(s), unit, datetime\n\nAttributes. at specific locations we measure (observe) specific properties\nQuite often, we want to know where things change (space-time interactions).\n\nReference systems for space, time, and attributes: what are they?\n\nSupport: if we have an attribute value associated with a line, polygon or grid cell:\n\ndoes the value summarise all values at points? (line/area/cell support), or\n\nis the value constant throughout the line/area/cell (point support)?\n\n\n\nContinuity:\n\nis a variable spatially continuous? Yes for geostatistical data, no for point patterns\n\nis an attribute variable continuous? Stevens’s measurement scales: yes if Interval or Ratio.\n\n\n\nSupport: examples\n\nRoad properties\n\nroad type: gravel, brick, asphalt (point support: everywhere on the whole road)\nmean width: block support (summary value)\nminimum width: block support (although the minimum width may be the value at a single (point) location, it summarizes all widths of the road–we no longer know the width at any specific point location)\n\n\nLand use/land cover\n\nwhen we classify e.g. 30 m x 30 m Landsat pixels into a single class, this single class is not constant throughout this pixel\nroad type is a land cover type, but a road never covers a 30 m x 30 m pixel\na land cover type like “urban” is associated with a positive (non-point) support: we don’t say a point in a garden or park is urban, or a point on a roof, but these are part of a (block support) urban fabric\n\n\nElevation\n\nin principle, we can measure elevation at a point; in practice, every measuring device has a physical (non-point) size\n\n\nFurther reading: Chapter 5: Attributes and Support",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#spatial-vs.-geospatial",
+    "href": "day1.html#spatial-vs.-geospatial",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.2 Spatial vs. Geospatial",
+    "text": "1.2 Spatial vs. Geospatial\n\nSpatial refers (physical) spaces, 2- or 3-dimensional (\\(R^2\\) or \\(R^3\\))\n\nMost often spatial statistics considers 2-dimensional problems\n3-d: meteorology, climate science, geophysics, groundwater hydrology, aeronautics, …\nwith time: spatiotemporal, this becomes 3- or 4-dimensional (\\(R^3\\) or \\(R^4\\))\n\n\n“Geo” refers to the Earth\nFor Earth coordinates, we always need a datum, consisting of an ellipsoid (shape) and the way it is fixed to the Earth (origin)\n\nThe Earth is modelled by an ellipsoid, which is nearly round\nIf we consider Earth-bound areas as flat, for larger areas we get the distances wrong\nWe can (and do) also work on \\(S^2\\), the surface of a sphere, rather than \\(R^2\\), to get distances right, but this creates a number of challenges (such as plotting on a 2D device)\n\n\nNon-geospatial spaces could be:\n\nAssociated with other bodies (moon, Mars: similar “size”)\nAstrophysics, places/directions in the universe (different size/scale)\nLocations in a building (where we use “engineering coordinates”, relative to a building corner and orientation) (different size/scale)\nMicroscope images (different size/scale)\nMRT scans (3-D), places in a human body (different size/scale)\nlocations on a genome? (different size/scale)\n\n\n\n\nCodelibrary(rnaturalearth)\nlibrary(sf)\n# Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE\npar(mar = c(2,2,0,0) + .1)\nne_countries() |&gt; st_geometry() |&gt; plot(axes=TRUE)\n\n\n\nworld map, with longitude and latitude map linearly to x and y (Plate Caree): does the Earth look like this?",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#simple-features",
+    "href": "day1.html#simple-features",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.3 Simple features",
+    "text": "1.3 Simple features\n“Simple features” comes from simple feature access, an OGC standard. OGC stands for “Open Geospatial Consortium” and is a standardisation body; many OGC standards become ISO standards (for whatever it is worth!).\nA feature is a “thing” that has\n\na feature geometry (location, shape if not point)\nother properties, called feature attributes\n\n“Simple” in “simple feature” refers to the property that geometries are points, lines or polygons, and that lines and polygon boundaries consists of sequences of points connected with straight lines (edges), and that edges do not cross other edges (do not self-intersect). Polygons consist of an outer (closed) ring with zero or more inner (closed) rings denoting holes.\nSimple feature geometries are zero-dimensional (points), one-dimensional (linestrings), or two-dimensional (polygons). Each geometry has an interior (I), a boundary (B) and an exterior (E). For polygons this is trivial, but\n\npoints: have an interior but no boundary\nlines: have a boundary that consists of the end points, all other points are interior\n\nValid polygons\nValid polygons are polygons with several geometrical constraints, such as\n\na closed ring means the first and last coordinate are identical,\nno edge is traversed twice,\na hole can touch an outer ring only in a point, not along a line(string)\nholes are inside the outer ring\nouter rings are winded counter-clockwise (CCW), inner rings (holes) clockwise (CW)\n\nIn particular the last condition is often dropped, as the order of the rings already denotes their role, and winding can easily reversed. An exception of this is polygons on the sphere, where both inside and outside have a limited area.\nDE-9IM: dimensionally extended nine-intersection model\nThe intersection of two geometries is the set of points they have in common. This set can be empty (no points), 0-, 1-, or 2-dimensional. The DE-9IM defines the relation between two geometries as the intersection of I, B and E of the first and the second geometry (hence: 9, see https://r-spatial.org/book/03-Geometries.html#fig-de9im). The values can be F (empty), 0, 1 or 2 (dimension if not empty), or T (not empty: any of 0, 1 or 2). Using the resulting encoding (the relation), one can define special predicates, such as\n\nA covers B\nA contains B\nA is disjoint from B\nA equals B\n\nand many more on; one can also define custom queries with a specific pattern, e.g.:\n\nA relates to B according to pattern 0FFFFFFF2.\nDE9-IM: challenges\nWe often work with polygon data that form a polygon coverage, which is a tesselation of an area of interest, e.g.\n\ncountries in a continent,\nprovinces in a country,\ncounties in a province\n\nWhen representing the polygons as a set of outer rings, it is hard to see whether there are no overlaps, and no gaps between polygons. Such overlaps or gaps could result from generalisation of polygon boundaries, one-by-one, and not by first identifying a common boundary and then generalizing that.\n“True” geographic information systems (e.g. ArcGIS or GRASS GIS) use a topological representation of geometries that consists of edge nodes and (outer and inner) boundaries, and can do such simplifications without creating overlaps or gaps.\nAnother challenge is that polygon coverages represented as a set of simple feature polygons do not uniquely assign all points to a single unit. Points on a boundary common to two geometries intersect with both, there is no geometric argument to assign them unambiguously to only one of them.\nFinally, as the Earth is round, the use of straight lines is problematic:\n\nprojection or re-projection changes space non-linearly, causing a straight line to change path\nunprojected data are associated with a sphere (or ellipsoid), leading to options what “straight” means, e.g.\n\nGeoJSON defines straight lines as straight in Plate Carree\ns2geometry assumes great circle segments\n\n\nvector and raster data\nIn addition to vector (point/line/polygon) data, we also have raster data. For regular rasters, space is cut into square cells, aligned with \\(x\\) and \\(y\\). Raster spaces can tesselate, see here.\nIn addition to regular rasters, we have rotated, sheared, rectilinear and curvilinear rasters. The raster space is primarily flat, so any time we use it model data of the Earth surface, we violate the constant raster cell size concept. Many data are distributed as regular rasters in geodetic coordinates (long/lat space, e.g., 0.25 degree raster cells), mostly for convienience (of who?)\nDiscrete global grids are (semi-)regular tesselations of the Earth surface, using squares, triangles, or hexagons. Examples are:\n\nGoogle’s s2geometry (R package s2)\nUber’s H3 (R package h3r)\nKevin Sahr’s dggrid (also nested hexagons; R package dggridr)\n\nInterestingly, computer screens are raster devices, so any time we do view vector data on a computer screen, a rasterization has taken place.\ndata cubes\nData cubes are array data with one or more dimensions associated with space or geometry. The degenerate example is a one-dimensional array (or collection thereof), which we have in a table or data.frame. The canonical example of array data is raster data, or a time series thereof.\nFurther examples include:\n\n3D rasters, including depth/height (atmospheric, geological)\ntime series for points (one dimension with feature geometries)\ntime series for areas (one dimension with feature geometries)\nOrigin-destination (OD) matrices (two dimensions with feature geometries)\nOD matrices as a function of time",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#the-spatial-statistics-data-types",
+    "href": "day1.html#the-spatial-statistics-data-types",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.4 The spatial statistics data types",
+    "text": "1.4 The spatial statistics data types\nPoint Patterns\n\nPoints (locations) + observation window\nExample from here\n\n\n\n\n\n\n\n\n\nFigure 1.1: Wind turbine parks in Germany\n\n\n\n\n\nThe locations contain the information\nPoints may have (discrete or continuous) marks (attributes)\nThe observation window tells where there are no points (empty space)\nGeostatistical data: locations + measured values\n\nCodelibrary(sf)\nno2 &lt;- read.csv(system.file(\"external/no2.csv\",\n    package = \"gstat\"))\ncrs &lt;- st_crs(\"EPSG:32632\")\nst_as_sf(no2, crs = \"OGC:CRS84\", coords =\n    c(\"station_longitude_deg\", \"station_latitude_deg\")) |&gt;\n    st_transform(crs) -&gt; no2.sf\nlibrary(ggplot2)\n# plot(st_geometry(no2.sf))\n\"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg\" |&gt;\n  read_sf() |&gt;\n  st_transform(crs) -&gt; de\nggplot() + geom_sf(data = de) +\n    geom_sf(data = no2.sf, mapping = aes(col = NO2))\n\n\n\nNO2 measurements at rural background stations (EEA)\n\n\n\n\nThe value of interest is measured at a set of sample locations\nAt other location, this value exists but is missing\n\nThe interest is in estimating (predicting) this missing value (interpolation)\nThe actual sample locations are not of (primary) interest, the signal is in the measured values\nAreal data\n\npolygons (or grid cells) + polygon summary values\n\n\nCode# https://en.wikipedia.org/wiki/List_of_NUTS_regions_in_the_European_Union_by_GDP\nde$GDP_percap = c(45200, 46100, 37900, 27800, 49700, 64700, 45000, 26700, 36500, 38700, 35700, 35300, 29900, 27400, 32400, 28900)\nggplot() + geom_sf(data = de) +\n    geom_sf(data = de, mapping = aes(fill = GDP_percap)) + \n    geom_sf(data = st_cast(de, \"MULTILINESTRING\"), col = 'white')\n\n\n\nNO2 rural background, average values per NUTS1 region\n\n\n\n\nThe polygons contain polygon summary (polygon support) values, not values that are constant throughout the polygon (as in a soil, lithology or land cover map)\nNeighbouring polygons are typically related: spatial correlation\nneighbour-neighbour correlation: Moran’s I\nregression models with correlated errors, spatial lag models, CAR models, GMRFs, …\nsee Ch 14-17 of SDSWR\n\nbriefly addressed on Friday",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#data-types-that-received-less-attention-in-the-spatial-statistics-literature",
+    "href": "day1.html#data-types-that-received-less-attention-in-the-spatial-statistics-literature",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.5 Data types that received less attention in the spatial statistics literature",
+    "text": "1.5 Data types that received less attention in the spatial statistics literature\nImage data\n\nCodelibrary(stars)\n# Loading required package: abind\nplot(L7_ETMs, rgb = 1:3)\n\n\n\nRGB image from a Landsat scene\n\n\n\n\nare these geostatistical data, or areal data?\nIf we identify objects from images, can we see them as point patterns?\nTracking data, trajectories\n\nCode# from: https://r-spatial.org/r/2017/08/28/nest.html\nlibrary(tidyverse)\n# ── Attaching core tidyverse packages ──────────── tidyverse 2.0.0 ──\n# ✔ dplyr     1.1.4     ✔ readr     2.1.5\n# ✔ forcats   1.0.0     ✔ stringr   1.5.1\n# ✔ lubridate 1.9.4     ✔ tibble    3.2.1\n# ✔ purrr     1.0.2     ✔ tidyr     1.3.1\n# ── Conflicts ────────────────────────────── tidyverse_conflicts() ──\n# ✖ dplyr::filter() masks stats::filter()\n# ✖ dplyr::lag()    masks stats::lag()\n# ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\nstorms.sf &lt;- storms %&gt;%\n    st_as_sf(coords = c(\"long\", \"lat\"), crs = 4326)\nstorms.sf &lt;- storms.sf %&gt;% \n    mutate(time = as.POSIXct(paste(paste(year,month,day, sep = \"-\"), \n                                   paste(hour, \":00\", sep = \"\")))) %&gt;% \n    select(-month, -day, -hour)\nstorms.nest &lt;- storms.sf %&gt;% group_by(name, year) %&gt;% nest\nto_line &lt;- function(tr) st_cast(st_combine(tr), \"LINESTRING\") %&gt;% .[[1]] \ntracks &lt;- storms.nest %&gt;% pull(data) %&gt;% map(to_line) %&gt;% st_sfc(crs = 4326)\nstorms.tr &lt;- storms.nest %&gt;% select(-data) %&gt;% st_sf(geometry = tracks)\nstorms.tr %&gt;% ggplot(aes(color = year)) + geom_sf()\n\n\n\nStorm/hurricane trajectories colored by year\n\n\n\n\nA temporal snapshot (time slice) of a set of moving things forms a point pattern\nWe often analyse trajectories by\n\nestimating densities, for space-time blocks, per individual or together\nanalysing interactions (alibi problem, mating animals, home range, UDF etc)\n\n\nDesign-based statistics\nIn design-based statistics, randomness comes from random sampling. Consider an area \\(B\\), from which we take samples \\[z(s),\ns \\in B,\\] with \\(s\\) a location for instance two-dimensional: \\(s_i =\n\\{x_i,y_i\\}\\). If we select the samples randomly, we can consider \\(S \\in B\\) a random variable, and \\(z(S)\\) a random sample. Note the randomness in \\(S\\), not in \\(z\\).\nTwo variables \\(z(S_1)\\) and \\(z(S_2)\\) are independent if \\(S_1\\) and \\(S_2\\) are sampled independently. For estimation we need to know the inclusion probabilities, which need to be non-negative for every location.\nIf inclusion probabilities are constant (simple random sampling; or complete spatial randomness: day 2, point patterns) then we can estimate the mean of \\(Z(B)\\) by the sample mean \\[\\frac{1}{n}\\sum_{j=1}^n\nz(s_j).\\] This also predicts the value of a randomly chosen observation \\(z(S)\\). It cannot be used to predict the value \\(z(s_0)\\) for a non-randomly chosen location \\(s_0\\); for this we need a model.\nModel-based statistics\nModel-based statistics assumes randomness in the measured responses; consider a regression model \\(y = X\\beta + e\\), where \\(e\\) is a random variable and as a consequence \\(y\\), the response variable is a random variable. In the spatial context we replace \\(y\\) with \\(z\\), and capitalize it to indicate it is a random variable, and write \\[Z(s) = X(s)\\beta + e(s)\\] to stress that\n\n\n\\(Z(s)\\) is a random function (random variables \\(Z\\) as a function of \\(s\\))\n\n\\(X(s)\\) is the matrix with covariates, which depend on \\(s\\)\n\n\n\\(\\beta\\) are (spatially) constant coefficients, not depening on \\(s\\)\n\n\n\\(e(s)\\) is a random function with mean zero and covariance matrix \\(\\Sigma\\)\n\n\nIn the regression literature this is called a (linear) mixed model, because \\(e\\) is not i.i.d. If \\(e(s)\\) contains an iid component \\(\\epsilon\\) we can write this as\n\\[Z(s) = X(s)\\beta + w(s) + \\epsilon\\]\nwith \\(w(s)\\) the spatial signal, and \\(\\epsilon\\) a noise compenent e.g. due to measurement error.\nPredicting \\(Z(s_0)\\) will involve (GLS) estimation of \\(\\beta\\), but also prediction of \\(e(s_0)\\) using correlated, nearby observations (day 3: geostatistics).\nDesign- or model-based?\n\ndesign-based requires a random sample, if that is the case it needs no further assumptions\nmodel-based requires stationarity assumptions to estimate \\(\\Sigma\\)\n\nmodel-based is typically more effective for interpolation problems\ndesign-based can be most effective when estimating, e.g. average mapping errors",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#checklist-if-you-have-spatial-data",
+    "href": "day1.html#checklist-if-you-have-spatial-data",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.6 Checklist if you have spatial data",
+    "text": "1.6 Checklist if you have spatial data\n\nDo you have the spatial coordinates of your data?\nAre the coordinates Earth-bound?\nIf yes, do you have the coordinate reference system of them?\nWhat is the support (physical size) of your observations?\nWere the data obtained by random sampling, and if yes, do you have sampling weights?\nDo you know the extent from which your data were sampled, or collected?",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#exercises",
+    "href": "day1.html#exercises",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.7 Exercises",
+    "text": "1.7 Exercises\n\nWhat is the coordinate reference system of the ne_countries() dataset, imported above?\nLook up the “Equidistant Cylindrical (Plate Carrée)” projection on the https://proj.org website.\nWhy is this projection called The simplest of all projections?\nProject ne_countries to Plate Carrée, and plot it with axes=TRUE. What has changed? (Hint: st_crs() accepts a proj string to define a coordinate reference system (CRS); st_transform() transforms a dataset to a new CRS.)\nProject the same dataset to Eckert IV projection. What has changed?\nAlso try plotting this dataset after transforming it to an orthographic projection with +proj=ortho; what went wrong?\n\nNext: continue with the exercises of Chapter 3 of “Spatial Data Science: with applications in R”, then those of Chapter 6.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  },
+  {
+    "objectID": "day1.html#further-reading",
+    "href": "day1.html#further-reading",
+    "title": "\n1  The new spatial stack in R\n",
+    "section": "\n1.8 Further reading",
+    "text": "1.8 Further reading\n\nRipley, B. 1981. Spatial Statistics. Wiley.\nCressie, N. 1993. Statistics for Spatial Data. Wiley.\nCochran, W.G. 1977. Sampling Techniques. Wiley.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>The new spatial stack in R</span>"
+    ]
+  }
+]

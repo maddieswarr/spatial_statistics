@@ -1,0 +1,373 @@
+# The new spatial stack in R
+
+### Learning goals
+
+-   learn the different data types considered in spatial statistics, and get familiar with simple features, as well as with the difference between discrete and continuous variability in *space* and in *attributes*
+-   learn what spatial dependence is about, and cases where it can be ignored
+
+
+::: {.callout-tip title="Summary"}
+-   Introduction to spatial data, support, coordinate reference systems
+-   Introduction to spatial statistical data types: point patterns, geostatistical data, lattice data; imagery, tracks/trajectories
+-   Is spatial dependence a fact? And is it a curse, or a blessing?
+-   Spatial sampling, design-based and model-based inference
+-   Checklist for your spatial data
+:::
+
+## What is special about spatial data?
+
+-   **Location**. Does location always involve coordinates? Relative/absolute, qualitative/quantitative
+-   **Coordinates**. What are coordinates? Dimension(s), unit
+-   **Time**. If not explicit, there is an implicit time reference. Dimension(s), unit, datetime
+-   **Attributes**. *at* specific locations we measure (observe) specific properties
+-   Quite often, we want to know *where* things change (**space-time interactions**).
+-   **Reference systems** for space, time, and attributes: what are they?
+-   **Support**: if we have an attribute value associated with a line, polygon or grid cell:
+    -   does the value _summarise_ all values at points? (line/area/cell support), **or**
+    -   is the value constant throughout the line/area/cell (point support)?
+-   **Continuity**:
+    -   is a variable *spatially* continuous? Yes for _geostatistical data_, no for _point patterns_
+    -   is an *attribute variable* continuous? [Stevens's measurement scales](https://www.science.org/doi/pdf/10.1126/science.103.2684.677?casa_token=H8am2h3sIYUAAAAA:eUd2ZU6ZRyJNqx4jdRv0E9WG7k3OBXAVbqgZ2O-Bl7pHNJSI0L2h9TM6i3YXve2nY5rD_4RbI2aecQ): yes if *Interval* or *Ratio*.
+
+### Support: examples
+
+-   Road properties
+    -   road type: gravel, brick, asphalt (point support: everywhere on the whole road)
+    -   mean width: block support (summary value)
+    -   minimum width: block support (although the minimum width may be the value at a single (point) location, it summarizes all widths of the road--we no longer know the width at any specific point location)
+-   Land use/land cover
+    -   when we classify e.g. 30 m x 30 m Landsat pixels into a single class, this single class is not constant throughout this pixel
+    -   road type is a land cover type, but a road never covers a 30 m x 30 m pixel
+    -   a land cover type like "urban" is associated with a positive (non-point) support: we don't say a point in a garden or park is urban, or a point on a roof, but these are part of a (block support) urban fabric
+-   Elevation
+    -   in principle, we can measure elevation at a point; in practice, every measuring device has a physical (non-point) size
+-   Further reading: [Chapter 5: Attributes and Support](https://r-spatial.org/book/05-Attributes.html)
+
+## Spatial vs. Geospatial
+
+-   Spatial refers (physical) spaces, 2- or 3-dimensional ($R^2$ or $R^3$)
+    -   Most often spatial statistics considers 2-dimensional problems
+    -   3-d: meteorology, climate science, geophysics, groundwater hydrology, aeronautics, ...
+    -   with _time_: spatiotemporal, this becomes 3- or 4-dimensional ($R^3$ or $R^4$)
+-   "Geo" refers to the Earth
+-   For Earth coordinates, we always need a *datum*, consisting of an ellipsoid (shape) and the way it is fixed to the Earth (origin)
+    -   The Earth is modelled by an ellipsoid, which is nearly round
+    -   If we consider Earth-bound areas as flat, for larger areas we get the distances wrong
+    -   We can (and do) also work on $S^2$, the surface of a sphere, rather than $R^2$, to get distances right, but this creates a number of challenges (such as plotting on a 2D device)
+-   Non-geospatial spaces could be:
+	-   Associated with other bodies (moon, Mars: similar "size")
+    -   Astrophysics, places/directions in the universe (different size/scale)
+    -   Locations in a building (where we use "engineering coordinates", relative to a building corner and orientation) (different size/scale)
+    -   Microscope images (different size/scale)
+    -   MRT scans (3-D), places in a human body (different size/scale)
+    -   locations on a genome? (different size/scale)
+
+```{r}
+#| code-fold: true
+#| out.width: '100%'
+#| fig.cap: "world map, with longitude and latitude map linearly to x and y ([Plate Caree](https://en.wikipedia.org/wiki/Equirectangular_projection)): does the Earth look like this?"
+library(rnaturalearth)
+library(sf)
+par(mar = c(2,2,0,0) + .1)
+ne_countries() |> st_geometry() |> plot(axes=TRUE)
+```
+
+## Simple features 
+
+"Simple features" comes from _simple feature access_, an OGC [standard](https://www.ogc.org/publications/standard/sfa/).
+OGC stands for "Open Geospatial Consortium" and is a standardisation body; many OGC standards become ISO standards (for whatever it is worth!).
+
+A feature is a "thing" that has 
+
+* a feature geometry (location, shape if not point)
+* other properties, called feature attributes
+
+"Simple" in "simple feature" refers to the property that geometries are points, lines or polygons, and that lines and polygon boundaries consists of sequences of points connected with _straight lines_ (edges), and that edges do not cross other edges (do not self-intersect). Polygons consist of an outer (closed) ring with zero or more inner (closed) rings denoting holes.
+
+Simple feature geometries are zero-dimensional (points), one-dimensional (linestrings), or two-dimensional (polygons). Each geometry has an interior (I), a boundary (B) and an exterior (E). For polygons this is trivial, but 
+
+* points: have an interior but no boundary
+* lines: have a boundary that consists of the end points, all other points are interior
+
+### Valid polygons
+
+Valid polygons are polygons with several geometrical constraints, such as
+
+* a closed ring means the first and last coordinate are identical,
+* no edge is traversed twice,
+* a hole can touch an outer ring only in a point, not along a line(string)
+* holes are inside the outer ring
+* outer rings are winded counter-clockwise (CCW), inner rings (holes) clockwise (CW)
+
+In particular the last condition is often dropped, as the order of the rings already denotes
+their role, and winding can easily reversed. An exception of this is polygons on the sphere,
+where _both_ inside and outside have a limited area.
+
+### DE-9IM: dimensionally extended nine-intersection model
+
+The _intersection_ of two geometries is the set of
+points they have in common. This set can be empty (no
+points), 0-, 1-, or 2-dimensional. The DE-9IM defines the
+**relation** between two geometries as the intersection of I,
+B and E of the first and the second geometry (hence: 9, see
+https://r-spatial.org/book/03-Geometries.html#fig-de9im).  The values
+can be `F` (empty), `0`, `1` or `2` (dimension if not empty), or `T`
+(not empty: any of 0, 1 or 2). Using the resulting encoding (the
+relation), one can define special predicates, such as 
+
+* A _covers_ B
+* A _contains_ B
+* A is _disjoint_ from B
+* A _equals_ B
+
+and many more on; one can also define custom queries with a specific pattern, e.g.:
+
+* A _relates_ to B according to pattern `0FFFFFFF2`.
+
+### DE9-IM: challenges
+
+We often work with polygon data that form a _polygon coverage_,
+which is a tesselation of an area of interest, e.g.
+
+* countries in a continent, 
+* provinces in a country,
+* counties in a province
+
+When representing the polygons as a set of outer rings, it is hard
+to see whether there are no overlaps, and no gaps between polygons.
+Such overlaps or gaps could result from generalisation of polygon
+boundaries, one-by-one, and not by first identifying a common
+boundary and then generalizing that. 
+
+"True" geographic information systems (e.g. ArcGIS or GRASS GIS)
+use a topological representation of geometries that consists of
+edge nodes and (outer and inner) _boundaries_, and can do such
+simplifications without creating overlaps or gaps.
+
+Another challenge is that polygon coverages represented as a set of
+simple feature polygons do not uniquely assign all points to a single
+unit. Points on a boundary common to two geometries intersect with
+both, there is no geometric argument to assign them unambiguously
+to only one of them.
+
+Finally, as the Earth is round, the use of _straight lines_ is problematic:
+
+* projection or re-projection changes space non-linearly, causing a straight line to change path
+* unprojected data are associated with a sphere (or ellipsoid), leading to **options** what "straight" means, e.g.
+    * GeoJSON [defines straight lines](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.1) as straight in Plate Carree
+    * s2geometry assumes [great circle](https://en.wikipedia.org/wiki/Great-circle_distance) segments
+
+### vector and raster data
+
+In addition to vector (point/line/polygon) data, we also have
+_raster data_. For _regular_ rasters, space is cut into square
+cells, aligned with $x$ and $y$.  Raster spaces _can_ tesselate, see
+[here](https://r-spatial.org/book/03-Geometries.html#raster-tessellations).
+
+In addition to regular rasters, we have rotated, sheared, rectilinear
+and curvilinear rasters. The raster _space_ is primarily flat,
+so any time we use it model data of the Earth surface, we violate
+the constant raster cell size concept. Many data are distributed
+as regular rasters in geodetic coordinates (long/lat space, e.g.,
+0.25 degree raster cells), mostly for convienience (of who?)
+
+**Discrete global grids** are (semi-)regular tesselations of the
+Earth surface, using squares, triangles, or hexagons. Examples are:
+
+* Google's [s2geometry](http://s2geometry.io/) (R package [s2](https://cran.r-project.org/web/packages/s2/index.html))
+* Uber's [H3](https://www.uber.com/en-FR/blog/h3/) (R package [h3r](https://cran.r-project.org/web/packages/h3r/index.html))
+* Kevin Sahr's [dggrid](https://discreteglobal.wpengine.com/) (also nested hexagons; R package [dggridr](https://cran.r-project.org/web/packages/dggridR/index.html))
+
+Interestingly, computer screens are raster devices, so any time
+we do view vector data on a computer screen, a rasterization has
+taken place.
+
+### data cubes
+
+Data cubes are _array data_ with one or more dimensions associated
+with space or geometry. The degenerate example is a one-dimensional
+array (or collection thereof), which we have in a table or
+data.frame.  The canonical example of array data is raster data,
+or a time series thereof. 
+
+Further examples include:
+
+* 3D rasters, including depth/height (atmospheric, geological)
+* time series for points (one dimension with feature geometries)
+* time series for areas (one dimension with feature geometries)
+* Origin-destination (OD) matrices (two dimensions with feature geometries)
+* OD matrices as a function of time
+
+## The spatial statistics data types
+
+### Point Patterns
+
+-   Points (locations) + observation window
+-   Example from [here](https://opendata-esri-de.opendata.arcgis.com/datasets/dc6d012f47d94fde99deacc316721f30/explore?location=51.099061%2C10.453852%2C7.45)
+
+```{r fig-gdal-fig-nodetails, echo = FALSE}
+#| code-fold: true
+#| out.width: '100%'
+#| fig.cap: "Wind turbine parks in Germany"
+knitr::include_graphics("turbines.png")
+```
+
+-   The locations contain the information
+-   Points may have (discrete or continuous) *marks* (attributes)
+-   The _observation window_ tells where there are no points (empty space)
+
+### Geostatistical data: locations + measured values
+
+```{r}
+#| code-fold: true
+#| out.width: '100%'
+#| fig.cap: "NO2 measurements at rural background stations (EEA)"
+library(sf)
+no2 <- read.csv(system.file("external/no2.csv",
+    package = "gstat"))
+crs <- st_crs("EPSG:32632")
+st_as_sf(no2, crs = "OGC:CRS84", coords =
+    c("station_longitude_deg", "station_latitude_deg")) |>
+    st_transform(crs) -> no2.sf
+library(ggplot2)
+# plot(st_geometry(no2.sf))
+"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg" |>
+  read_sf() |>
+  st_transform(crs) -> de
+ggplot() + geom_sf(data = de) +
+    geom_sf(data = no2.sf, mapping = aes(col = NO2))
+```
+
+-   The value of interest is measured at a set of sample locations
+-   At other location, this value exists but is *missing*
+-   The interest is in estimating (predicting) this missing value (interpolation)
+-   The actual sample locations are not of (primary) interest, the signal is in the measured values
+
+### Areal data
+
+-   polygons (or grid cells) + polygon summary values
+
+```{r}
+#| code-fold: true
+#| out.width: '100%'
+#| fig.cap: "NO2 rural background, average values per NUTS1 region"
+# https://en.wikipedia.org/wiki/List_of_NUTS_regions_in_the_European_Union_by_GDP
+de$GDP_percap = c(45200, 46100, 37900, 27800, 49700, 64700, 45000, 26700, 36500, 38700, 35700, 35300, 29900, 27400, 32400, 28900)
+ggplot() + geom_sf(data = de) +
+    geom_sf(data = de, mapping = aes(fill = GDP_percap)) + 
+	geom_sf(data = st_cast(de, "MULTILINESTRING"), col = 'white')
+```
+
+-   The polygons contain polygon summary (polygon support) values, not values that are constant throughout the polygon (as in a soil, lithology or land cover map)
+-   Neighbouring polygons are typically related: spatial correlation
+-   neighbour-neighbour correlation: Moran's I
+-   regression models with correlated errors, spatial lag models, CAR models, GMRFs, ...
+-   see Ch 14-17 of [SDSWR](https://r-spatial.org/book/)
+-   briefly addressed on Friday
+
+## Data types that received less attention in the spatial statistics literature
+
+### Image data
+
+```{r}
+#| code-fold: true
+#| out.width: '100%'
+#| fig.cap: "RGB image from a Landsat scene"
+library(stars)
+plot(L7_ETMs, rgb = 1:3)
+```
+
+-   are these geostatistical data, or areal data?
+-   If we identify objects from images, can we see them as point patterns?
+
+### Tracking data, trajectories
+
+```{r}
+#| code-fold: true
+#| out.width: '100%'
+#| fig.cap: "Storm/hurricane trajectories colored by year"
+# from: https://r-spatial.org/r/2017/08/28/nest.html
+library(tidyverse)
+storms.sf <- storms %>%
+    st_as_sf(coords = c("long", "lat"), crs = 4326)
+storms.sf <- storms.sf %>% 
+    mutate(time = as.POSIXct(paste(paste(year,month,day, sep = "-"), 
+                                   paste(hour, ":00", sep = "")))) %>% 
+    select(-month, -day, -hour)
+storms.nest <- storms.sf %>% group_by(name, year) %>% nest
+to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]] 
+tracks <- storms.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
+storms.tr <- storms.nest %>% select(-data) %>% st_sf(geometry = tracks)
+storms.tr %>% ggplot(aes(color = year)) + geom_sf()
+```
+
+-   A temporal snapshot (time slice) of a set of moving things forms a point pattern
+-   We often analyse trajectories by
+    -   estimating densities, for space-time blocks, per individual or together
+    -   analysing interactions (alibi problem, mating animals, home range, UDF etc)
+
+
+### Design-based statistics
+
+In design-based statistics, randomness comes from random sampling. Consider an area $B$, from which we take samples $$z(s),
+s \in B,$$ with $s$ a location for instance two-dimensional: $s_i =
+\{x_i,y_i\}$. If we select the samples *randomly*, we can consider $S \in B$ a random variable, and $z(S)$ a random sample. Note the randomness in $S$, not in $z$.
+
+Two variables $z(S_1)$ and $z(S_2)$ are *independent* if $S_1$ and $S_2$ are sampled independently. For estimation we need to know the inclusion probabilities, which need to be non-negative for every location.
+
+If inclusion probabilities are constant (simple random sampling; or complete spatial randomness: day 2, point patterns) then we can estimate the mean of $Z(B)$ by the sample mean $$\frac{1}{n}\sum_{j=1}^n
+z(s_j).$$ This also predicts the value of a *randomly* chosen observation $z(S)$. It cannot be used to predict the value $z(s_0)$ for a non-randomly chosen location $s_0$; for this we need a model.
+
+### Model-based statistics
+
+Model-based statistics assumes randomness in the measured responses; consider a regression model $y = X\beta + e$, where $e$ is a random variable and as a consequence $y$, the response variable is a random variable. In the spatial context we replace $y$ with $z$, and capitalize it to indicate it is a random variable, and write $$Z(s) = X(s)\beta + e(s)$$ to stress that
+
+-   $Z(s)$ is a random function (random variables $Z$ as a function of $s$)
+-   $X(s)$ is the matrix with covariates, which depend on $s$
+-   $\beta$ are (spatially) constant coefficients, not depening on $s$
+-   $e(s)$ is a random function with mean zero and covariance matrix $\Sigma$
+
+In the regression literature this is called a (linear) mixed model, because $e$ is not i.i.d. If $e(s)$ contains an iid component $\epsilon$ we can write this as
+
+$$Z(s) = X(s)\beta + w(s) + \epsilon$$
+
+with $w(s)$ the spatial signal, and $\epsilon$ a noise compenent e.g. due to measurement error.
+
+Predicting $Z(s_0)$ will involve (GLS) estimation of $\beta$, but also prediction of $e(s_0)$ using correlated, nearby observations (day 3: geostatistics).
+
+### Design- or model-based?
+
+-   design-based requires a random sample, if that is the case it needs no further assumptions
+-   model-based requires stationarity assumptions to estimate $\Sigma$
+-   model-based is typically more effective for interpolation problems
+-   design-based can be most effective when estimating, e.g. average mapping errors
+
+
+## Checklist if you have spatial data
+
+-   Do you have the spatial coordinates of your data?
+-   Are the coordinates Earth-bound?
+-   If yes, do you have the coordinate reference system of them?
+-   What is the support (physical size) of your observations?
+-   Were the data obtained by random sampling, and if yes, do you have sampling weights?
+-   Do you know the *extent* from which your data were sampled, or collected?
+
+## Exercises
+
+-   What is the coordinate reference system of the `ne_countries()` dataset, imported above?
+-   Look up the "Equidistant Cylindrical (Plate Carrée)" projection on the <https://proj.org> website.
+-   Why is this projection called *The simplest of all projections*?
+-   Project `ne_countries` to Plate Carrée, and plot it with `axes=TRUE`. What has changed? (Hint: `st_crs()` accepts a *proj string* to define a coordinate reference system (CRS); `st_transform()` transforms a dataset to a new CRS.)
+-   Project the same dataset to Eckert IV projection. What has changed?
+-   Also try plotting this dataset after transforming it to an orthographic projection with `+proj=ortho`; what went wrong?
+
+Next: continue with the [exercises of Chapter
+3](https://r-spatial.org/book/03-Geometries.html#exercises) of
+"Spatial Data Science: with applications in R", then [those of
+Chapter 6](https://r-spatial.org/book/06-Cubes.html#exercises).
+
+## Further reading
+
+-   Ripley, B. 1981. Spatial Statistics. Wiley.
+-   Cressie, N. 1993. Statistics for Spatial Data. Wiley.
+-   Cochran, W.G. 1977. Sampling Techniques. Wiley.
