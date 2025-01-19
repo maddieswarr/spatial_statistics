@@ -1,0 +1,15 @@
+# prediction and simulation
+
+##  point patterns: 
+
+### fitting densities
+
+### simulating point patterns
+
+##  geostatistics
+
+### kriging interpolation
+
+### conditional simulation,
+
+

@@ -89,6 +89,99 @@ Simple feature geometries are zero-dimensional (points), one-dimensional (linest
 * points: have an interior but no boundary
 * lines: have a boundary that consists of the end points, all other points are interior
 
+
+### Intro to `sf` and `stars`
+
+-   Briefly: `sf` provides classes and methods for *simple features*
+    -   a feature is a "thing", with geometrical properties (point(s), line(s), polygon(s)) and attributes
+    -   `sf` stores data in `data.frame`s with a list-column (of class `sfc`) that holds the geometries
+
+::: {.callout-tip title="the Simple Feature standard"}
+"Simple Feature Access" is an [open standard](https://www.ogc.org/standard/sfa/) for data with vector geometries. It defines a set of classes for geometries and operations on them.
+
+-   "simple" refers to curves that are "simply" represented by points connected by straight lines
+-   connecting lines are not allowed to [self-intersect](https://r-spatial.org/book/03-Geometries.html#sec-valid)
+-   polygons can have holes, and have validity constraints: holes cannot extrude the outer ring etc.
+-   All spatial software uses this: ArcGIS, QGIS, PostGIS, other spatial databases, ...
+:::
+
+#### Why do all functions in `sf` start with `st_`?
+
+-   see [here](https://ecoevo.social/@noamross/112055449473807578)
+
+
+#### `sf` operators, how to understand?
+
+Package `sf` has objects at three nested "levels":
+
+-   `sfg`: a single geometry (without coordinate reference system); contained in:
+
+-   `sfc`: a set of `sfg` geometries (`list`), with a coordinate reference system and bounding box; contained in:
+
+-   `sf`: a `data.frame` or `tibble` with at least one geometry (`sfc`) column
+
+-   Operations *not* involving geometry (`data.frame`; base R; tidyverse)
+
+    -   geometry column + `sf` class is sticky!
+    -   this can be convenient, and sometimes annoying
+    -   use `as.data.frame` or `as_tibble` to strip the `sf` class label
+
+-   Operations involving *only* geometry
+
+    -   **predicates** (resulting `TRUE`/`FALSE`)
+        -   unary
+        -   binary: [DE9-IM](https://en.wikipedia.org/wiki/DE-9IM); work on two sets, result `sgbp`, which is a sparse logical matrix representation
+            -   is_within_distance
+    -   **measures**
+        -   unary: length, area
+        -   binary: distance, `by_element = FALSE`
+    -   **transformers**
+        -   unary: buffer, centroid
+        -   binary: intersection, union, difference, symdifference
+        -   n-ary: intersection, difference
+
+-   Operations involving geometry *and* attributes
+
+    -   many of the above!
+    -   `st_join`
+    -   `aggregate`
+    -   `st_interpolate_aw`: requires expression whether variable is spatially *extensive* or *intensive*
+
+#### `sf` and `spatstat`
+
+We can try to convert an `sf` object to a `ppp` (point pattern object in `spatstat`):
+
+```{r error=TRUE}
+library(sf)
+library(spatstat)
+demo(nc, echo = FALSE, ask = FALSE)
+pts = st_centroid(st_geometry(nc))
+as.ppp(pts) # ???
+```
+
+Note that `sf` interprets a `NA` CRS as: flat, projected (Cartesian) space.
+
+#### `stars`
+
+Packages `stars` is a package for (dense) array data, where array
+dimensions are associated with space and/or time (spatial time
+series, data cubes). It is built for simplicity (pure R), and for
+maximum integration with `sf`.
+
+R's `array` is very powerful, but its metadata (`dimnames`) is
+restricted to `character` vectors.
+
+A `stars` object 
+
+* is a list with R arrays (or pointers to files with such arrays)
+* has a `dimensions` attribute with all the metadata of the dimensions
+(offset, cellsize, units, reference system, point/block support)
+
+```{r}
+library(stars)
+st_as_stars() # default: 1 degree global Cartesian grid
+```
+
 ### Valid polygons
 
 Valid polygons are polygons with several geometrical constraints, such as

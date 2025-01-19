@@ -49,10 +49,9 @@ install.packages("starsdata", repos = "http://cran.uni-muenster.de/pebesma/",
 Sessions are from 9:00-14:00 CET 
 daily schedule:
 
-* 9:00 - 10:00 lecture block I
-* 10:00 - 11:00 exercises I
-* 11:00 - 12:00 lecture block II
-* 12:00 - 14:00 exercises II
+* 9:00 - 9:45 lecture block I
+* 10:00 - 10:45 lecture block II
+* 11:00 - 14:00 exercise block
 
 Further:
 
