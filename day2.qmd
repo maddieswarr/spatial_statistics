@@ -1,0 +1,311 @@
+# Operations, raster-vector, vector-raster
+
+## Learning goals
+
+In many practical geospatial data science cases, the researcher is faced with
+combining different datasets that multiple include datasets
+
+* of raster and vector type,
+* with different spatial coordinate systems
+* with different time reference
+* with different spatial and/or temporal resolutions
+
+A common approach is to first work all datasets towards a common
+reference system, type, and resolution, and then combine them. What
+the "best" common resolution is depends on the goals of the study.
+Today we will look at methods and tools to do so.
+
+
+::: {.callout-tip title="Summary"}
+-   Upstream libraries
+-   Operatios on vector data and on raster data
+-   Vector-raster and raster-vector conversions
+-   Up- and downsampling, area-weighted interpolation
+:::
+
+
+## The upstream libraries
+
+The main libraries: GDAL, PROJ and GEOS are found in all spatial data science software stacks.
+See [here](https://r-spatial.org/book/01-hello.html#fig-gdal-fig-nodetails) for R; for R and Python below:
+
+```{r fig-gdal-fig-nodetails, echo = FALSE}
+knitr::include_graphics("geopythonR.png")
+```
+
+
+## geometry measures, predicates, and transformers
+
+### measaures
+
+Geometry measures include
+
+* unary measures: area, length, dimension
+* binary measures: distance (and relate, which gives the DE9-IM pattern)
+
+### predicates
+
+Predicates include those in this [table](https://r-spatial.org/book/03-Geometries.html#sec-de9im).
+
+### transformers
+
+See [unary](https://r-spatial.org/book/03-Geometries.html#unary-transformers) and [binary](https://r-spatial.org/book/03-Geometries.html#sec-bintrans) and [n-ary](https://r-spatial.org/book/03-Geometries.html#sec-nary) for a full list.
+
+```{r}
+library(sf)
+pt = st_point(c(0,0))
+b = st_buffer(pt, 1)
+plot(b)
+plot(pt, add = TRUE, cex = 3, col = 'red', pch = 3)
+st_area(b)
+pi - st_area(b) # why not zero?
+```
+
+```{r}
+pt2 = st_point(c(1.5, 0))
+b1 = st_buffer(pt, 1)
+b2 = st_buffer(pt2, 1)
+par(mfrow = c(2, 2), mar = c(0,0,1,0))
+plot(c(b1, b2), main = 'union')
+plot(st_union(b1, b2), col = 'lightgrey', add = TRUE)
+plot(c(b1, b2), add = TRUE)
+plot(c(b1, b2), main = 'intersection')
+plot(st_intersection(b1, b2), col = 'lightgrey', add = TRUE)
+plot(c(b1, b2), add = TRUE)
+plot(c(b1, b2), main = 'difference')
+plot(st_difference(b1, b2), col = 'lightgrey', add = TRUE)
+plot(c(b1, b2), add = TRUE)
+plot(c(b1, b2), main = 'sym_difference')
+plot(st_sym_difference(b1, b2), col = 'lightgrey', add = TRUE)
+plot(c(b1, b2), add = TRUE)
+```
+
+## spherical geometry
+
+All software using GEOS (Python, PostGIS, QGIS) computes geometrical
+operations on geodetic (long/lat) coordinates in $R^2$ - in a flat,
+Cartesian coordinate system. Python's `geopandas` warns if it does,
+but does it nevertheless. In R's `sf` we can mimic this by setting
+`sf_use_s2(FALSE)`.
+
+```{r}
+old = sf_use_s2(FALSE)
+p1 = st_sfc(st_point(c(0, 0)), crs = 'OGC:CRS84')
+p2 = st_sfc(st_point(c(0,40)), crs = 'OGC:CRS84')
+b1 = st_buffer(p1, 10) 
+b1 |> st_area() |> units::set_units(km^2)
+b2 = st_buffer(p2, 10) 
+b2 |> st_area() |> units::set_units(km^2)
+sf_use_s2(old) # restore
+```
+
+Both buffers "look" good in plate carree:
+```{r}
+library(sf)
+library(rnaturalearth)
+par(mar = c(2,2,0,0) + .1)
+ne_countries() |> st_geometry() |> plot(axes=TRUE)
+plot(b1, add = TRUE, border = 'red')
+plot(b2, add = TRUE, border = 'red')
+```
+
+but not on a plot with proper aspect ratio:
+```{r}
+plot(b2)
+ne_countries() |> st_geometry() |> plot(axes=TRUE, add=TRUE)
+```
+
+## raster-vector: polygonizing, extracting
+
+Rasters can be converted to vector data, either cell-by-cell or groupwise.
+Cell-by-cell one could convert to either points or polygons:
+```{r}
+library(stars)
+L7 = st_as_stars(L7_ETMs)
+L7[,1:30,1:30] |> st_as_sf(as_points = TRUE) |> plot(cex = .75, pch = 16)
+L7[,1:30,1:30] |> st_as_sf(as_points = FALSE) |> plot()
+```
+
+If we have categorical variables in a raster map, such as land use, we can create
+contiguous polygons from areas having a constant value:
+```{r}
+lc = read_stars(system.file("tif/lc.tif", package = "stars"))
+plot(lc, key.pos = 4, key.width = lcm(7))
+pal = attr(lc[[1]], "colors")
+st_as_sf(lc, merge = TRUE) |> plot(key.pos = 4, pal = pal, key.width = lcm(7))
+```
+
+Raster values can be _extracted_ at arbitrary point locations:
+```{r}
+set.seed(131) # to make this reproducible
+pts.L7 = st_sample(st_bbox(L7), 3)
+st_extract(L7, pts.L7) # two-dimensional array: 3 points x 6 bands
+st_extract(L7, pts.L7) |> st_as_sf() # "wide": bands spread over columns
+st_extract(L7, pts.L7) |> st_as_sf(long = TRUE) # "long form": cycles geometries
+pts.lc = st_sample(st_bbox(lc), 7)
+st_extract(lc, pts.lc) |> na.omit() # one-dimensional: returns an `sf` object by default
+```
+
+## vector-raster: rasterize, interpolate, density
+
+
+### rasterize
+
+```{r}
+de.sf = read_sf("de_nuts1.gpkg")
+de.sf$HASC_1.f = as.factor(de.sf$HASC_1)
+plot(de.sf["HASC_1.f"])
+plot(st_as_stars(de.sf["HASC_1.f"])) # vector data cube
+template = st_as_stars(st_bbox(de.sf), dx = 0.1) # .1 x .1 degree cells
+de.r = st_rasterize(de.sf["HASC_1.f"], template) 
+plot(de.r)
+```
+
+`st_rasterize()` calls the GDAL utility `gdal_rasterize` (through the C API, not as as system call). Its command line options are found [here](https://gdal.org/en/stable/programs/gdal_rasterize.html).  E.g.,
+
+```{r}
+de.r$at = st_rasterize(de.sf["HASC_1.f"], template, options = "ALL_TOUCHED=TRUE")
+de.r
+as.vector(de.r$at) |> length() # nr of non-missing values
+as.vector(de.r$HASC_1.f) |> length()
+```
+
+See `?gdal_utils` for help on other GDAL utilities available through the C API.
+
+### Interpolate and density
+
+Interpolating measured values, or estimating densities of points are two common methods to
+move from point data to continuous rasters. We will use the NO2 dataset over Germany, and
+work in a sensible coordinate reference system (UTM zone 32N):
+
+Interpolation (inverse distance):
+```{r}
+no2 <- read.csv(system.file("external/no2.csv", package = "gstat"))
+crs <- st_crs("EPSG:32632")
+st_as_sf(no2, crs = "OGC:CRS84", coords =
+    c("station_longitude_deg", "station_latitude_deg")) |>
+    st_transform(crs) -> no2.sf
+library(ggplot2)
+# plot(st_geometry(no2.sf))
+de.sf |> st_transform(crs) -> de
+template = st_as_stars(st_bbox(de), dx = units::set_units(10, km)) # 10 km x 10 km
+de.r_utm = st_rasterize(de["HASC_1.f"], template) 
+library(gstat)
+no2.r = gstat::idw(NO2~1, no2.sf, de.r_utm)
+plot(no2.r["var1.pred"], reset = FALSE, breaks = "equal", main = "NO2 conc.")
+st_geometry(no2.sf) |> plot(add = TRUE, col = 'green', pch = 16)
+st_geometry(de) |> plot(add = TRUE, border = "yellow")
+```
+
+Point densities:
+```{r}
+library(spatstat)
+d = density(as.ppp(no2.sf["NO2"], as.owin(de))) |> st_as_stars()
+plot(d, reset = FALSE, main = "station density")
+st_geometry(no2.sf) |> plot(add = TRUE, col = 'green', pch = 16)
+st_geometry(de) |> plot(add = TRUE, border = "yellow")
+
+```
+
+## up- and down-scaling
+
+Up- and downscaling means going from fine to course resolution
+(up), or from course to fine resolution (down). Upscaling is
+usually simple as it may simply involve grouping and summarising,
+downscaling is complicated as it may involve statistical modelling,
+sampling, simulation, quantifying and handling uncertainty.
+
+### aggregation: grouping features
+
+```{r}
+library(sf)
+demo(nc, ask = FALSE, echo = FALSE) # loads the nc dataset
+library(dplyr)
+nc |> select("BIR74") |>
+	group_by(substr(nc$NAME, 1, 1) < 'M') |>
+	summarise(BIR74sum = sum(BIR74)) -> res
+res
+plot(res)
+```
+
+### aggregation: spatial predicates
+
+Package `terra` can aggregate raster data specifying the number of cells
+to group in each dimension:
+
+```{r}
+library(terra)
+library(stars)
+L7 = st_as_stars(L7_ETMs)
+L7.t = rast(L7)
+(at = aggregate(L7.t, c(10,20)))
+plot(at)
+```
+
+Package `stars` takes a more general approach, and allows arbitrary (`sf` or `stars`)
+objects as aggregation predicates:
+
+```{r}
+set.seed(1355) # make reproducible
+bb = st_bbox(L7) |> st_as_sfc()
+p = st_sample(bb, 200)
+st_combine(p) |> st_voronoi() |> st_collection_extract("POLYGON") |> st_crop(bb) -> v
+plot(v, col = NA, border = 'black')
+aa = aggregate(L7, v, mean)
+plot(aa)
+```
+
+### sampling
+
+As pointed out above, `st_extract()` (or `terra::extract()`) can be used to retrieve
+cell values at point locations; `st_intersection()` can be used to retrieve polygon
+(or line or point) values at a give set of point locations.
+
+`st_sample()` can be used to create sample points, in addition to
+uniform random sampling (on $R^2$, or the sphere, $S^2$) it can also
+be used for stratified random, regular or Fibonacci (quasi-regular on
+a sphere) sampling. Further strategies are provided (and interfaced)
+through package `spatstat` (e.g. spatially clustered, or with a
+functionally known varying intensity).
+
+### area-weighted interpolation, dasymetric mapping
+
+```{r}
+st_bbox(L7) |> st_as_stars(nx = 10, ny = 10) -> p
+aw = st_interpolate_aw(aa, p, extensive = FALSE)
+plot(aw, key.pos = 1)
+```
+
+This preserves the area-weighted values:
+
+```{r}
+aa.sf = st_as_sf(aa)[1]
+sum(aa.sf[[1]] * st_area(aa.sf))
+sum(aw[[1]] * st_area(aw))
+```
+
+### downsampling
+
+Area-weighted interpolation can also be used to estimate (or
+redistribute) values for arbitrarily smaller areas. This is however
+of fairly little use as constants are assigned inside larger source
+areas. To do better, high resolution proxies can be used to inform
+a higher resolution spatial pattern. E.g. to estimate population
+density at high resolution from administrative area summaries,
+high resolution land use or land cover data can be used ("dasymetric
+mapping"). In remote sensing, high resolution spatial low resolution
+temporal data (e.g. aerial photo's) are used to downsample lower
+resolution high frequent data (e.g. from sattelites).
+
+## Exercises
+
+1. In the first `st_buffer` example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?
+1. Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in
+```{r}
+b1 |> st_set_crs(NA) |> st_area()
+b2 |> st_set_crs(NA) |> st_area()
+```
+1. From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? 
+1. Check whether this is the case using `st_is_valid()`. Which geometries are not valid? Can you make them valid?
+1. Try the area-weighted example above using `extensive = TRUE`. What does this mean? Which quantity is preserved now?
+
