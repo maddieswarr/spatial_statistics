@@ -2,14 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://edzer.github.io/madrid/index.html</loc>
-    <lastmod>2025-01-18T10:52:15.061Z</lastmod>
+    <lastmod>2025-01-19T21:59:14.862Z</lastmod>
   </url>
   <url>
     <loc>https://edzer.github.io/madrid/day1.html</loc>
-    <lastmod>2025-01-19T11:04:32.472Z</lastmod>
+    <lastmod>2025-01-19T22:24:15.989Z</lastmod>
   </url>
   <url>
     <loc>https://edzer.github.io/madrid/day2.html</loc>
     <lastmod>2025-01-19T17:29:57.250Z</lastmod>
+  </url>
+  <url>
+    <loc>https://edzer.github.io/madrid/day3.html</loc>
+    <lastmod>2025-01-19T22:11:33.731Z</lastmod>
+  </url>
+  <url>
+    <loc>https://edzer.github.io/madrid/day4.html</loc>
+    <lastmod>2025-01-19T22:12:23.486Z</lastmod>
   </url>
 </urlset>
