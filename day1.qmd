@@ -231,8 +231,7 @@ st_as_sf(no2, crs = "OGC:CRS84", coords =
     st_transform(crs) -> no2.sf
 library(ggplot2)
 # plot(st_geometry(no2.sf))
-"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg" |>
-  read_sf() |>
+read_sf("de_nuts1.gpkg") |>
   st_transform(crs) -> de
 ggplot() + geom_sf(data = de) +
     geom_sf(data = no2.sf, mapping = aes(col = NO2))
