@@ -7,6 +7,10 @@ The following packages may be used during the course; it is assumed
 that you know how to install packages, and have permission to do
 so on your computer. 
 
+### R version
+
+We require R 4.1.0 (as we'll be using the native pipe `|>`)
+
 ### CRAN packages:
 
 ```{r eval=FALSE}

@@ -394,14 +394,14 @@ Figure&nbsp;2.1
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/">stars</a></span><span class="op">)</span></span>
 <span><span class="co"># Loading required package: abind</span></span>
 <span><span class="va">L7</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html">st_as_stars</a></span><span class="op">(</span><span class="va">L7_ETMs</span><span class="op">)</span></span>
-<span><span class="va">L7</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span>as_points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">.75</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="va">L7</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span>as_points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">.75</span>, pch <span class="op">=</span> <span class="fl">16</span>, key.pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="day2_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">L7</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span>as_points <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">L7</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span>as_points <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>key.pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="day2_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
@@ -513,7 +513,7 @@ Figure&nbsp;2.1
 </div>
 </div>
 </div>
-<p><code><a href="https://r-spatial.github.io/stars/reference/st_rasterize.html">st_rasterize()</a></code> calls the GDAL utility <code>gdal_rasterize</code> (through the C API, not as as system call). Its command line options are found <a href="https://gdal.org/en/stable/programs/gdal_rasterize.html">here</a>. E.g.,</p>
+<p><code><a href="https://r-spatial.github.io/stars/reference/st_rasterize.html">st_rasterize()</a></code> calls the GDAL utility <code>gdal_rasterize</code> (through the C API, not as as system call). Its command line options are found <a href="https://gdal.org/en/stable/programs/gdal_rasterize.html">here</a>. E.g., to fill all cells touched by a polygon, rather than those which a pixel center in a polygon, we can use</p>
 <div class="cell">
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">de.r</span><span class="op">$</span><span class="va">at</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_rasterize.html">st_rasterize</a></span><span class="op">(</span><span class="va">de.sf</span><span class="op">[</span><span class="st">"HASC_1.f"</span><span class="op">]</span>, <span class="va">template</span>, options <span class="op">=</span> <span class="st">"ALL_TOUCHED=TRUE"</span><span class="op">)</span></span>
 <span><span class="va">de.r</span></span>
@@ -546,13 +546,12 @@ Figure&nbsp;2.1
 <span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">no2</span>, crs <span class="op">=</span> <span class="st">"OGC:CRS84"</span>, coords <span class="op">=</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"station_longitude_deg"</span>, <span class="st">"station_latitude_deg"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">crs</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">no2.sf</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="co"># plot(st_geometry(no2.sf))</span></span>
 <span><span class="va">de.sf</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">crs</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">de</span></span>
 <span><span class="va">template</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html">st_as_stars</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html">st_bbox</a></span><span class="op">(</span><span class="va">de</span><span class="op">)</span>, dx <span class="op">=</span> <span class="fu">units</span><span class="fu">::</span><span class="fu"><a href="https://r-quantities.github.io/units/reference/units.html">set_units</a></span><span class="op">(</span><span class="fl">10</span>, <span class="va">km</span><span class="op">)</span><span class="op">)</span> <span class="co"># 10 km x 10 km</span></span>
 <span><span class="va">de.r_utm</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_rasterize.html">st_rasterize</a></span><span class="op">(</span><span class="va">de</span><span class="op">[</span><span class="st">"HASC_1.f"</span><span class="op">]</span>, <span class="va">template</span><span class="op">)</span> </span>
+<span><span class="va">de.r_utm</span><span class="op">$</span><span class="va">mask</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">de.r_utm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/gstat/">gstat</a></span><span class="op">)</span></span>
-<span><span class="va">no2.r</span> <span class="op">=</span> <span class="fu">gstat</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/gstat/reference/krige.html">idw</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span>, <span class="va">de.r_utm</span><span class="op">)</span></span>
+<span><span class="va">no2.r</span> <span class="op">=</span> <span class="fu">gstat</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/gstat/reference/krige.html">idw</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span>, <span class="va">de.r_utm</span><span class="op">[</span><span class="st">"mask"</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co"># [inverse distance weighted interpolation]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">no2.r</span><span class="op">[</span><span class="st">"var1.pred"</span><span class="op">]</span>, reset <span class="op">=</span> <span class="cn">FALSE</span>, breaks <span class="op">=</span> <span class="st">"equal"</span>, main <span class="op">=</span> <span class="st">"NO2 conc."</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="va">no2.sf</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'green'</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
@@ -634,7 +633,7 @@ Figure&nbsp;2.1
 <span><span class="co">#   &lt;lgl&gt;                            &lt;dbl&gt;          &lt;MULTIPOLYGON [°]&gt;</span></span>
 <span><span class="co"># 1 FALSE                           148652 (((-78.7 35.5, -78.5 35.7,…</span></span>
 <span><span class="co"># 2 TRUE                            181310 (((-77.8 35.4, -77.8 35.3,…</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="day2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
@@ -741,6 +740,7 @@ Figure&nbsp;2.1
 <li>Check whether this is the case using <code><a href="https://r-spatial.github.io/sf/reference/valid.html">st_is_valid()</a></code>. Which geometries are not valid? Can you make them valid?</li>
 <li>Try the area-weighted example above using <code>extensive = TRUE</code>. What does this mean? Which quantity is preserved now?</li>
 </ol>
+<p>Continue with the exercises of <a href="https://r-spatial.org/book/05-Attributes.html#exercises">SDSWR Ch 5</a>.</p>
 
 
 <!-- -->
@@ -1350,8 +1350,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-134"><a href="#cb24-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb24-135"><a href="#cb24-135" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
 <span id="cb24-136"><a href="#cb24-136" aria-hidden="true" tabindex="-1"></a>L7 <span class="ot">=</span> <span class="fu">st_as_stars</span>(L7_ETMs)</span>
-<span id="cb24-137"><a href="#cb24-137" aria-hidden="true" tabindex="-1"></a>L7[,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>(<span class="at">as_points =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">cex =</span> .<span class="dv">75</span>, <span class="at">pch =</span> <span class="dv">16</span>)</span>
-<span id="cb24-138"><a href="#cb24-138" aria-hidden="true" tabindex="-1"></a>L7[,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>(<span class="at">as_points =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb24-137"><a href="#cb24-137" aria-hidden="true" tabindex="-1"></a>L7[,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>(<span class="at">as_points =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">cex =</span> .<span class="dv">75</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">key.pos =</span> <span class="dv">1</span>)</span>
+<span id="cb24-138"><a href="#cb24-138" aria-hidden="true" tabindex="-1"></a>L7[,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>(<span class="at">as_points =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">key.pos =</span> <span class="dv">1</span>)</span>
 <span id="cb24-139"><a href="#cb24-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-140"><a href="#cb24-140" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-141"><a href="#cb24-141" aria-hidden="true" tabindex="-1"></a>If we have categorical variables in a raster map, such as land use, we can create</span>
@@ -1389,7 +1389,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-179"><a href="#cb24-179" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(de.r)</span>
 <span id="cb24-180"><a href="#cb24-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-181"><a href="#cb24-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-182"><a href="#cb24-182" aria-hidden="true" tabindex="-1"></a><span class="in">`st_rasterize()`</span> calls the GDAL utility <span class="in">`gdal_rasterize`</span> (through the C API, not as as system call). Its command line options are found <span class="co">[</span><span class="ot">here</span><span class="co">](https://gdal.org/en/stable/programs/gdal_rasterize.html)</span>.  E.g.,</span>
+<span id="cb24-182"><a href="#cb24-182" aria-hidden="true" tabindex="-1"></a><span class="in">`st_rasterize()`</span> calls the GDAL utility <span class="in">`gdal_rasterize`</span> (through the C API, not as as system call). Its command line options are found <span class="co">[</span><span class="ot">here</span><span class="co">](https://gdal.org/en/stable/programs/gdal_rasterize.html)</span>.  E.g., to fill all cells touched by a polygon, rather than those which a pixel center in a polygon, we can use</span>
 <span id="cb24-183"><a href="#cb24-183" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-186"><a href="#cb24-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb24-187"><a href="#cb24-187" aria-hidden="true" tabindex="-1"></a>de.r<span class="sc">$</span>at <span class="ot">=</span> <span class="fu">st_rasterize</span>(de.sf[<span class="st">"HASC_1.f"</span>], template, <span class="at">options =</span> <span class="st">"ALL_TOUCHED=TRUE"</span>)</span>
@@ -1413,129 +1413,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-207"><a href="#cb24-207" aria-hidden="true" tabindex="-1"></a><span class="fu">st_as_sf</span>(no2, <span class="at">crs =</span> <span class="st">"OGC:CRS84"</span>, <span class="at">coords =</span></span>
 <span id="cb24-208"><a href="#cb24-208" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"station_longitude_deg"</span>, <span class="st">"station_latitude_deg"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb24-209"><a href="#cb24-209" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> no2.sf</span>
-<span id="cb24-210"><a href="#cb24-210" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb24-211"><a href="#cb24-211" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(st_geometry(no2.sf))</span></span>
-<span id="cb24-212"><a href="#cb24-212" aria-hidden="true" tabindex="-1"></a>de.sf <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> de</span>
-<span id="cb24-213"><a href="#cb24-213" aria-hidden="true" tabindex="-1"></a>template <span class="ot">=</span> <span class="fu">st_as_stars</span>(<span class="fu">st_bbox</span>(de), <span class="at">dx =</span> units<span class="sc">::</span><span class="fu">set_units</span>(<span class="dv">10</span>, km)) <span class="co"># 10 km x 10 km</span></span>
-<span id="cb24-214"><a href="#cb24-214" aria-hidden="true" tabindex="-1"></a>de.r_utm <span class="ot">=</span> <span class="fu">st_rasterize</span>(de[<span class="st">"HASC_1.f"</span>], template) </span>
-<span id="cb24-215"><a href="#cb24-215" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
-<span id="cb24-216"><a href="#cb24-216" aria-hidden="true" tabindex="-1"></a>no2.r <span class="ot">=</span> gstat<span class="sc">::</span><span class="fu">idw</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, de.r_utm)</span>
-<span id="cb24-217"><a href="#cb24-217" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(no2.r[<span class="st">"var1.pred"</span>], <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">breaks =</span> <span class="st">"equal"</span>, <span class="at">main =</span> <span class="st">"NO2 conc."</span>)</span>
-<span id="cb24-218"><a href="#cb24-218" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(no2.sf) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>, <span class="at">pch =</span> <span class="dv">16</span>)</span>
-<span id="cb24-219"><a href="#cb24-219" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(de) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"yellow"</span>)</span>
-<span id="cb24-220"><a href="#cb24-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-221"><a href="#cb24-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-222"><a href="#cb24-222" aria-hidden="true" tabindex="-1"></a>Point densities:</span>
-<span id="cb24-225"><a href="#cb24-225" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-226"><a href="#cb24-226" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
-<span id="cb24-227"><a href="#cb24-227" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">density</span>(<span class="fu">as.ppp</span>(no2.sf[<span class="st">"NO2"</span>], <span class="fu">as.owin</span>(de))) <span class="sc">|&gt;</span> <span class="fu">st_as_stars</span>()</span>
-<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(d, <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">main =</span> <span class="st">"station density"</span>)</span>
-<span id="cb24-229"><a href="#cb24-229" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(no2.sf) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>, <span class="at">pch =</span> <span class="dv">16</span>)</span>
-<span id="cb24-230"><a href="#cb24-230" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(de) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"yellow"</span>)</span>
-<span id="cb24-231"><a href="#cb24-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-232"><a href="#cb24-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-233"><a href="#cb24-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-234"><a href="#cb24-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## up- and down-scaling</span></span>
-<span id="cb24-235"><a href="#cb24-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-236"><a href="#cb24-236" aria-hidden="true" tabindex="-1"></a>Up- and downscaling means going from fine to course resolution</span>
-<span id="cb24-237"><a href="#cb24-237" aria-hidden="true" tabindex="-1"></a>(up), or from course to fine resolution (down). Upscaling is</span>
-<span id="cb24-238"><a href="#cb24-238" aria-hidden="true" tabindex="-1"></a>usually simple as it may simply involve grouping and summarising,</span>
-<span id="cb24-239"><a href="#cb24-239" aria-hidden="true" tabindex="-1"></a>downscaling is complicated as it may involve statistical modelling,</span>
-<span id="cb24-240"><a href="#cb24-240" aria-hidden="true" tabindex="-1"></a>sampling, simulation, quantifying and handling uncertainty.</span>
-<span id="cb24-241"><a href="#cb24-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-242"><a href="#cb24-242" aria-hidden="true" tabindex="-1"></a><span class="fu">### aggregation: grouping features</span></span>
-<span id="cb24-243"><a href="#cb24-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-246"><a href="#cb24-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-247"><a href="#cb24-247" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb24-248"><a href="#cb24-248" aria-hidden="true" tabindex="-1"></a><span class="fu">demo</span>(nc, <span class="at">ask =</span> <span class="cn">FALSE</span>, <span class="at">echo =</span> <span class="cn">FALSE</span>) <span class="co"># loads the nc dataset</span></span>
-<span id="cb24-249"><a href="#cb24-249" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb24-250"><a href="#cb24-250" aria-hidden="true" tabindex="-1"></a>nc <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="st">"BIR74"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-251"><a href="#cb24-251" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="fu">substr</span>(nc<span class="sc">$</span>NAME, <span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">&lt;</span> <span class="st">'M'</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-252"><a href="#cb24-252" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">BIR74sum =</span> <span class="fu">sum</span>(BIR74)) <span class="ot">-&gt;</span> res</span>
-<span id="cb24-253"><a href="#cb24-253" aria-hidden="true" tabindex="-1"></a>res</span>
-<span id="cb24-254"><a href="#cb24-254" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res)</span>
-<span id="cb24-255"><a href="#cb24-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-256"><a href="#cb24-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-257"><a href="#cb24-257" aria-hidden="true" tabindex="-1"></a><span class="fu">### aggregation: spatial predicates</span></span>
-<span id="cb24-258"><a href="#cb24-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-259"><a href="#cb24-259" aria-hidden="true" tabindex="-1"></a>Package <span class="in">`terra`</span> can aggregate raster data specifying the number of cells</span>
-<span id="cb24-260"><a href="#cb24-260" aria-hidden="true" tabindex="-1"></a>to group in each dimension:</span>
-<span id="cb24-261"><a href="#cb24-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-264"><a href="#cb24-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-265"><a href="#cb24-265" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb24-266"><a href="#cb24-266" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
-<span id="cb24-267"><a href="#cb24-267" aria-hidden="true" tabindex="-1"></a>L7 <span class="ot">=</span> <span class="fu">st_as_stars</span>(L7_ETMs)</span>
-<span id="cb24-268"><a href="#cb24-268" aria-hidden="true" tabindex="-1"></a>L7.t <span class="ot">=</span> <span class="fu">rast</span>(L7)</span>
-<span id="cb24-269"><a href="#cb24-269" aria-hidden="true" tabindex="-1"></a>(<span class="at">at =</span> <span class="fu">aggregate</span>(L7.t, <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>)))</span>
-<span id="cb24-270"><a href="#cb24-270" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(at)</span>
-<span id="cb24-271"><a href="#cb24-271" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-272"><a href="#cb24-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-273"><a href="#cb24-273" aria-hidden="true" tabindex="-1"></a>Package <span class="in">`stars`</span> takes a more general approach, and allows arbitrary (<span class="in">`sf`</span> or <span class="in">`stars`</span>)</span>
-<span id="cb24-274"><a href="#cb24-274" aria-hidden="true" tabindex="-1"></a>objects as aggregation predicates:</span>
-<span id="cb24-275"><a href="#cb24-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-278"><a href="#cb24-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-279"><a href="#cb24-279" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1355</span>) <span class="co"># make reproducible</span></span>
-<span id="cb24-280"><a href="#cb24-280" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">=</span> <span class="fu">st_bbox</span>(L7) <span class="sc">|&gt;</span> <span class="fu">st_as_sfc</span>()</span>
-<span id="cb24-281"><a href="#cb24-281" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">st_sample</span>(bb, <span class="dv">200</span>)</span>
-<span id="cb24-282"><a href="#cb24-282" aria-hidden="true" tabindex="-1"></a><span class="fu">st_combine</span>(p) <span class="sc">|&gt;</span> <span class="fu">st_voronoi</span>() <span class="sc">|&gt;</span> <span class="fu">st_collection_extract</span>(<span class="st">"POLYGON"</span>) <span class="sc">|&gt;</span> <span class="fu">st_crop</span>(bb) <span class="ot">-&gt;</span> v</span>
-<span id="cb24-283"><a href="#cb24-283" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v, <span class="at">col =</span> <span class="cn">NA</span>, <span class="at">border =</span> <span class="st">'black'</span>)</span>
-<span id="cb24-284"><a href="#cb24-284" aria-hidden="true" tabindex="-1"></a>aa <span class="ot">=</span> <span class="fu">aggregate</span>(L7, v, mean)</span>
-<span id="cb24-285"><a href="#cb24-285" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(aa)</span>
-<span id="cb24-286"><a href="#cb24-286" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-287"><a href="#cb24-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-288"><a href="#cb24-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### sampling</span></span>
-<span id="cb24-289"><a href="#cb24-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-290"><a href="#cb24-290" aria-hidden="true" tabindex="-1"></a>As pointed out above, <span class="in">`st_extract()`</span> (or <span class="in">`terra::extract()`</span>) can be used to retrieve</span>
-<span id="cb24-291"><a href="#cb24-291" aria-hidden="true" tabindex="-1"></a>cell values at point locations; <span class="in">`st_intersection()`</span> can be used to retrieve polygon</span>
-<span id="cb24-292"><a href="#cb24-292" aria-hidden="true" tabindex="-1"></a>(or line or point) values at a give set of point locations.</span>
-<span id="cb24-293"><a href="#cb24-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-294"><a href="#cb24-294" aria-hidden="true" tabindex="-1"></a><span class="in">`st_sample()`</span> can be used to create sample points, in addition to</span>
-<span id="cb24-295"><a href="#cb24-295" aria-hidden="true" tabindex="-1"></a>uniform random sampling (on $R^2$, or the sphere, $S^2$) it can also</span>
-<span id="cb24-296"><a href="#cb24-296" aria-hidden="true" tabindex="-1"></a>be used for stratified random, regular or Fibonacci (quasi-regular on</span>
-<span id="cb24-297"><a href="#cb24-297" aria-hidden="true" tabindex="-1"></a>a sphere) sampling. Further strategies are provided (and interfaced)</span>
-<span id="cb24-298"><a href="#cb24-298" aria-hidden="true" tabindex="-1"></a>through package <span class="in">`spatstat`</span> (e.g. spatially clustered, or with a</span>
-<span id="cb24-299"><a href="#cb24-299" aria-hidden="true" tabindex="-1"></a>functionally known varying intensity).</span>
-<span id="cb24-300"><a href="#cb24-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-301"><a href="#cb24-301" aria-hidden="true" tabindex="-1"></a><span class="fu">### area-weighted interpolation, dasymetric mapping</span></span>
-<span id="cb24-302"><a href="#cb24-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-305"><a href="#cb24-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-306"><a href="#cb24-306" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(L7) <span class="sc">|&gt;</span> <span class="fu">st_as_stars</span>(<span class="at">nx =</span> <span class="dv">10</span>, <span class="at">ny =</span> <span class="dv">10</span>) <span class="ot">-&gt;</span> p</span>
-<span id="cb24-307"><a href="#cb24-307" aria-hidden="true" tabindex="-1"></a>aw <span class="ot">=</span> <span class="fu">st_interpolate_aw</span>(aa, p, <span class="at">extensive =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb24-308"><a href="#cb24-308" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(aw, <span class="at">key.pos =</span> <span class="dv">1</span>)</span>
-<span id="cb24-309"><a href="#cb24-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-310"><a href="#cb24-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-311"><a href="#cb24-311" aria-hidden="true" tabindex="-1"></a>This preserves the area-weighted values:</span>
-<span id="cb24-312"><a href="#cb24-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-315"><a href="#cb24-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-316"><a href="#cb24-316" aria-hidden="true" tabindex="-1"></a>aa.sf <span class="ot">=</span> <span class="fu">st_as_sf</span>(aa)[<span class="dv">1</span>]</span>
-<span id="cb24-317"><a href="#cb24-317" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(aa.sf[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="fu">st_area</span>(aa.sf))</span>
-<span id="cb24-318"><a href="#cb24-318" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(aw[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="fu">st_area</span>(aw))</span>
-<span id="cb24-319"><a href="#cb24-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-320"><a href="#cb24-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-321"><a href="#cb24-321" aria-hidden="true" tabindex="-1"></a><span class="fu">### downsampling</span></span>
-<span id="cb24-322"><a href="#cb24-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-323"><a href="#cb24-323" aria-hidden="true" tabindex="-1"></a>Area-weighted interpolation can also be used to estimate (or</span>
-<span id="cb24-324"><a href="#cb24-324" aria-hidden="true" tabindex="-1"></a>redistribute) values for arbitrarily smaller areas. This is however</span>
-<span id="cb24-325"><a href="#cb24-325" aria-hidden="true" tabindex="-1"></a>of fairly little use as constants are assigned inside larger source</span>
-<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a>areas. To do better, high resolution proxies can be used to inform</span>
-<span id="cb24-327"><a href="#cb24-327" aria-hidden="true" tabindex="-1"></a>a higher resolution spatial pattern. E.g. to estimate population</span>
-<span id="cb24-328"><a href="#cb24-328" aria-hidden="true" tabindex="-1"></a>density at high resolution from administrative area summaries,</span>
-<span id="cb24-329"><a href="#cb24-329" aria-hidden="true" tabindex="-1"></a>high resolution land use or land cover data can be used ("dasymetric</span>
-<span id="cb24-330"><a href="#cb24-330" aria-hidden="true" tabindex="-1"></a>mapping"). In remote sensing, high resolution spatial low resolution</span>
-<span id="cb24-331"><a href="#cb24-331" aria-hidden="true" tabindex="-1"></a>temporal data (e.g. aerial photo's) are used to downsample lower</span>
-<span id="cb24-332"><a href="#cb24-332" aria-hidden="true" tabindex="-1"></a>resolution high frequent data (e.g. from sattelites).</span>
-<span id="cb24-333"><a href="#cb24-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-334"><a href="#cb24-334" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb24-335"><a href="#cb24-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-336"><a href="#cb24-336" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>In the first <span class="in">`st_buffer`</span> example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?</span>
-<span id="cb24-337"><a href="#cb24-337" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in</span>
-<span id="cb24-340"><a href="#cb24-340" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a>b1 <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="cn">NA</span>) <span class="sc">|&gt;</span> <span class="fu">st_area</span>()</span>
-<span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a>b2 <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="cn">NA</span>) <span class="sc">|&gt;</span> <span class="fu">st_area</span>()</span>
-<span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? </span>
-<span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Check whether this is the case using <span class="in">`st_is_valid()`</span>. Which geometries are not valid? Can you make them valid?</span>
-<span id="cb24-346"><a href="#cb24-346" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Try the area-weighted example above using <span class="in">`extensive = TRUE`</span>. What does this mean? Which quantity is preserved now?</span>
+<span id="cb24-210"><a href="#cb24-210" aria-hidden="true" tabindex="-1"></a>de.sf <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> de</span>
+<span id="cb24-211"><a href="#cb24-211" aria-hidden="true" tabindex="-1"></a>template <span class="ot">=</span> <span class="fu">st_as_stars</span>(<span class="fu">st_bbox</span>(de), <span class="at">dx =</span> units<span class="sc">::</span><span class="fu">set_units</span>(<span class="dv">10</span>, km)) <span class="co"># 10 km x 10 km</span></span>
+<span id="cb24-212"><a href="#cb24-212" aria-hidden="true" tabindex="-1"></a>de.r_utm <span class="ot">=</span> <span class="fu">st_rasterize</span>(de[<span class="st">"HASC_1.f"</span>], template) </span>
+<span id="cb24-213"><a href="#cb24-213" aria-hidden="true" tabindex="-1"></a>de.r_utm<span class="sc">$</span>mask <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">as.numeric</span>(de.r_utm[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, <span class="dv">1</span>)</span>
+<span id="cb24-214"><a href="#cb24-214" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
+<span id="cb24-215"><a href="#cb24-215" aria-hidden="true" tabindex="-1"></a>no2.r <span class="ot">=</span> gstat<span class="sc">::</span><span class="fu">idw</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, de.r_utm[<span class="st">"mask"</span>])</span>
+<span id="cb24-216"><a href="#cb24-216" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(no2.r[<span class="st">"var1.pred"</span>], <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">breaks =</span> <span class="st">"equal"</span>, <span class="at">main =</span> <span class="st">"NO2 conc."</span>)</span>
+<span id="cb24-217"><a href="#cb24-217" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(no2.sf) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>, <span class="at">pch =</span> <span class="dv">16</span>)</span>
+<span id="cb24-218"><a href="#cb24-218" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(de) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"yellow"</span>)</span>
+<span id="cb24-219"><a href="#cb24-219" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-220"><a href="#cb24-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-221"><a href="#cb24-221" aria-hidden="true" tabindex="-1"></a>Point densities:</span>
+<span id="cb24-224"><a href="#cb24-224" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-225"><a href="#cb24-225" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
+<span id="cb24-226"><a href="#cb24-226" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">density</span>(<span class="fu">as.ppp</span>(no2.sf[<span class="st">"NO2"</span>], <span class="fu">as.owin</span>(de))) <span class="sc">|&gt;</span> <span class="fu">st_as_stars</span>()</span>
+<span id="cb24-227"><a href="#cb24-227" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(d, <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">main =</span> <span class="st">"station density"</span>)</span>
+<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(no2.sf) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>, <span class="at">pch =</span> <span class="dv">16</span>)</span>
+<span id="cb24-229"><a href="#cb24-229" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(de) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"yellow"</span>)</span>
+<span id="cb24-230"><a href="#cb24-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-231"><a href="#cb24-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-232"><a href="#cb24-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-233"><a href="#cb24-233" aria-hidden="true" tabindex="-1"></a><span class="fu">## up- and down-scaling</span></span>
+<span id="cb24-234"><a href="#cb24-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-235"><a href="#cb24-235" aria-hidden="true" tabindex="-1"></a>Up- and downscaling means going from fine to course resolution</span>
+<span id="cb24-236"><a href="#cb24-236" aria-hidden="true" tabindex="-1"></a>(up), or from course to fine resolution (down). Upscaling is</span>
+<span id="cb24-237"><a href="#cb24-237" aria-hidden="true" tabindex="-1"></a>usually simple as it may simply involve grouping and summarising,</span>
+<span id="cb24-238"><a href="#cb24-238" aria-hidden="true" tabindex="-1"></a>downscaling is complicated as it may involve statistical modelling,</span>
+<span id="cb24-239"><a href="#cb24-239" aria-hidden="true" tabindex="-1"></a>sampling, simulation, quantifying and handling uncertainty.</span>
+<span id="cb24-240"><a href="#cb24-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-241"><a href="#cb24-241" aria-hidden="true" tabindex="-1"></a><span class="fu">### aggregation: grouping features</span></span>
+<span id="cb24-242"><a href="#cb24-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-245"><a href="#cb24-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-246"><a href="#cb24-246" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb24-247"><a href="#cb24-247" aria-hidden="true" tabindex="-1"></a><span class="fu">demo</span>(nc, <span class="at">ask =</span> <span class="cn">FALSE</span>, <span class="at">echo =</span> <span class="cn">FALSE</span>) <span class="co"># loads the nc dataset</span></span>
+<span id="cb24-248"><a href="#cb24-248" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb24-249"><a href="#cb24-249" aria-hidden="true" tabindex="-1"></a>nc <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="st">"BIR74"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-250"><a href="#cb24-250" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="fu">substr</span>(nc<span class="sc">$</span>NAME, <span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">&lt;</span> <span class="st">'M'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-251"><a href="#cb24-251" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">BIR74sum =</span> <span class="fu">sum</span>(BIR74)) <span class="ot">-&gt;</span> res</span>
+<span id="cb24-252"><a href="#cb24-252" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb24-253"><a href="#cb24-253" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res[<span class="dv">2</span>])</span>
+<span id="cb24-254"><a href="#cb24-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-255"><a href="#cb24-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-256"><a href="#cb24-256" aria-hidden="true" tabindex="-1"></a><span class="fu">### aggregation: spatial predicates</span></span>
+<span id="cb24-257"><a href="#cb24-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-258"><a href="#cb24-258" aria-hidden="true" tabindex="-1"></a>Package <span class="in">`terra`</span> can aggregate raster data specifying the number of cells</span>
+<span id="cb24-259"><a href="#cb24-259" aria-hidden="true" tabindex="-1"></a>to group in each dimension:</span>
+<span id="cb24-260"><a href="#cb24-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-263"><a href="#cb24-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-264"><a href="#cb24-264" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb24-265"><a href="#cb24-265" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
+<span id="cb24-266"><a href="#cb24-266" aria-hidden="true" tabindex="-1"></a>L7 <span class="ot">=</span> <span class="fu">st_as_stars</span>(L7_ETMs)</span>
+<span id="cb24-267"><a href="#cb24-267" aria-hidden="true" tabindex="-1"></a>L7.t <span class="ot">=</span> <span class="fu">rast</span>(L7)</span>
+<span id="cb24-268"><a href="#cb24-268" aria-hidden="true" tabindex="-1"></a>(<span class="at">at =</span> <span class="fu">aggregate</span>(L7.t, <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>)))</span>
+<span id="cb24-269"><a href="#cb24-269" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(at)</span>
+<span id="cb24-270"><a href="#cb24-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-271"><a href="#cb24-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-272"><a href="#cb24-272" aria-hidden="true" tabindex="-1"></a>Package <span class="in">`stars`</span> takes a more general approach, and allows arbitrary (<span class="in">`sf`</span> or <span class="in">`stars`</span>)</span>
+<span id="cb24-273"><a href="#cb24-273" aria-hidden="true" tabindex="-1"></a>objects as aggregation predicates:</span>
+<span id="cb24-274"><a href="#cb24-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-277"><a href="#cb24-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-278"><a href="#cb24-278" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1355</span>) <span class="co"># make reproducible</span></span>
+<span id="cb24-279"><a href="#cb24-279" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">=</span> <span class="fu">st_bbox</span>(L7) <span class="sc">|&gt;</span> <span class="fu">st_as_sfc</span>()</span>
+<span id="cb24-280"><a href="#cb24-280" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">st_sample</span>(bb, <span class="dv">200</span>)</span>
+<span id="cb24-281"><a href="#cb24-281" aria-hidden="true" tabindex="-1"></a><span class="fu">st_combine</span>(p) <span class="sc">|&gt;</span> <span class="fu">st_voronoi</span>() <span class="sc">|&gt;</span> <span class="fu">st_collection_extract</span>(<span class="st">"POLYGON"</span>) <span class="sc">|&gt;</span> <span class="fu">st_crop</span>(bb) <span class="ot">-&gt;</span> v</span>
+<span id="cb24-282"><a href="#cb24-282" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v, <span class="at">col =</span> <span class="cn">NA</span>, <span class="at">border =</span> <span class="st">'black'</span>)</span>
+<span id="cb24-283"><a href="#cb24-283" aria-hidden="true" tabindex="-1"></a>aa <span class="ot">=</span> <span class="fu">aggregate</span>(L7, v, mean)</span>
+<span id="cb24-284"><a href="#cb24-284" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(aa)</span>
+<span id="cb24-285"><a href="#cb24-285" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-286"><a href="#cb24-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-287"><a href="#cb24-287" aria-hidden="true" tabindex="-1"></a><span class="fu">### sampling</span></span>
+<span id="cb24-288"><a href="#cb24-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-289"><a href="#cb24-289" aria-hidden="true" tabindex="-1"></a>As pointed out above, <span class="in">`st_extract()`</span> (or <span class="in">`terra::extract()`</span>) can be used to retrieve</span>
+<span id="cb24-290"><a href="#cb24-290" aria-hidden="true" tabindex="-1"></a>cell values at point locations; <span class="in">`st_intersection()`</span> can be used to retrieve polygon</span>
+<span id="cb24-291"><a href="#cb24-291" aria-hidden="true" tabindex="-1"></a>(or line or point) values at a give set of point locations.</span>
+<span id="cb24-292"><a href="#cb24-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-293"><a href="#cb24-293" aria-hidden="true" tabindex="-1"></a><span class="in">`st_sample()`</span> can be used to create sample points, in addition to</span>
+<span id="cb24-294"><a href="#cb24-294" aria-hidden="true" tabindex="-1"></a>uniform random sampling (on $R^2$, or the sphere, $S^2$) it can also</span>
+<span id="cb24-295"><a href="#cb24-295" aria-hidden="true" tabindex="-1"></a>be used for stratified random, regular or Fibonacci (quasi-regular on</span>
+<span id="cb24-296"><a href="#cb24-296" aria-hidden="true" tabindex="-1"></a>a sphere) sampling. Further strategies are provided (and interfaced)</span>
+<span id="cb24-297"><a href="#cb24-297" aria-hidden="true" tabindex="-1"></a>through package <span class="in">`spatstat`</span> (e.g. spatially clustered, or with a</span>
+<span id="cb24-298"><a href="#cb24-298" aria-hidden="true" tabindex="-1"></a>functionally known varying intensity).</span>
+<span id="cb24-299"><a href="#cb24-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-300"><a href="#cb24-300" aria-hidden="true" tabindex="-1"></a><span class="fu">### area-weighted interpolation, dasymetric mapping</span></span>
+<span id="cb24-301"><a href="#cb24-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-304"><a href="#cb24-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-305"><a href="#cb24-305" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(L7) <span class="sc">|&gt;</span> <span class="fu">st_as_stars</span>(<span class="at">nx =</span> <span class="dv">10</span>, <span class="at">ny =</span> <span class="dv">10</span>) <span class="ot">-&gt;</span> p</span>
+<span id="cb24-306"><a href="#cb24-306" aria-hidden="true" tabindex="-1"></a>aw <span class="ot">=</span> <span class="fu">st_interpolate_aw</span>(aa, p, <span class="at">extensive =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-307"><a href="#cb24-307" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(aw, <span class="at">key.pos =</span> <span class="dv">1</span>)</span>
+<span id="cb24-308"><a href="#cb24-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-309"><a href="#cb24-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-310"><a href="#cb24-310" aria-hidden="true" tabindex="-1"></a>This preserves the area-weighted values:</span>
+<span id="cb24-311"><a href="#cb24-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-314"><a href="#cb24-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-315"><a href="#cb24-315" aria-hidden="true" tabindex="-1"></a>aa.sf <span class="ot">=</span> <span class="fu">st_as_sf</span>(aa)[<span class="dv">1</span>]</span>
+<span id="cb24-316"><a href="#cb24-316" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(aa.sf[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="fu">st_area</span>(aa.sf))</span>
+<span id="cb24-317"><a href="#cb24-317" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(aw[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="fu">st_area</span>(aw))</span>
+<span id="cb24-318"><a href="#cb24-318" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-319"><a href="#cb24-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-320"><a href="#cb24-320" aria-hidden="true" tabindex="-1"></a><span class="fu">### downsampling</span></span>
+<span id="cb24-321"><a href="#cb24-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-322"><a href="#cb24-322" aria-hidden="true" tabindex="-1"></a>Area-weighted interpolation can also be used to estimate (or</span>
+<span id="cb24-323"><a href="#cb24-323" aria-hidden="true" tabindex="-1"></a>redistribute) values for arbitrarily smaller areas. This is however</span>
+<span id="cb24-324"><a href="#cb24-324" aria-hidden="true" tabindex="-1"></a>of fairly little use as constants are assigned inside larger source</span>
+<span id="cb24-325"><a href="#cb24-325" aria-hidden="true" tabindex="-1"></a>areas. To do better, high resolution proxies can be used to inform</span>
+<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a>a higher resolution spatial pattern. E.g. to estimate population</span>
+<span id="cb24-327"><a href="#cb24-327" aria-hidden="true" tabindex="-1"></a>density at high resolution from administrative area summaries,</span>
+<span id="cb24-328"><a href="#cb24-328" aria-hidden="true" tabindex="-1"></a>high resolution land use or land cover data can be used ("dasymetric</span>
+<span id="cb24-329"><a href="#cb24-329" aria-hidden="true" tabindex="-1"></a>mapping"). In remote sensing, high resolution spatial low resolution</span>
+<span id="cb24-330"><a href="#cb24-330" aria-hidden="true" tabindex="-1"></a>temporal data (e.g. aerial photo's) are used to downsample lower</span>
+<span id="cb24-331"><a href="#cb24-331" aria-hidden="true" tabindex="-1"></a>resolution high frequent data (e.g. from sattelites).</span>
+<span id="cb24-332"><a href="#cb24-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-333"><a href="#cb24-333" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb24-334"><a href="#cb24-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-335"><a href="#cb24-335" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>In the first <span class="in">`st_buffer`</span> example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?</span>
+<span id="cb24-336"><a href="#cb24-336" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in</span>
+<span id="cb24-339"><a href="#cb24-339" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-340"><a href="#cb24-340" aria-hidden="true" tabindex="-1"></a>b1 <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="cn">NA</span>) <span class="sc">|&gt;</span> <span class="fu">st_area</span>()</span>
+<span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a>b2 <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="cn">NA</span>) <span class="sc">|&gt;</span> <span class="fu">st_area</span>()</span>
+<span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? </span>
+<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Check whether this is the case using <span class="in">`st_is_valid()`</span>. Which geometries are not valid? Can you make them valid?</span>
+<span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Try the area-weighted example above using <span class="in">`extensive = TRUE`</span>. What does this mean? Which quantity is preserved now?</span>
+<span id="cb24-346"><a href="#cb24-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-347"><a href="#cb24-347" aria-hidden="true" tabindex="-1"></a>Continue with the exercises of <span class="co">[</span><span class="ot">SDSWR Ch 5</span><span class="co">](https://r-spatial.org/book/05-Attributes.html#exercises)</span>.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
