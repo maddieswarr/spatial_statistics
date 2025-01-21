@@ -187,10 +187,9 @@ st_as_sf(no2, crs = "OGC:CRS84", coords =
     st_transform(crs) -> no2.sf
 de.sf |> st_transform(crs) -> de
 template = st_as_stars(st_bbox(de), dx = units::set_units(10, km)) # 10 km x 10 km
-de.r_utm = st_rasterize(de["HASC_1.f"], template) 
-de.r_utm$mask = ifelse(as.numeric(de.r_utm[[1]]) == 0, NA, 1)
+de.r_utm = st_rasterize(de, template) 
 library(gstat)
-no2.r = gstat::idw(NO2~1, no2.sf, de.r_utm["mask"])
+no2.r = gstat::idw(NO2~1, no2.sf, de.r_utm) |> st_crop(de)
 plot(no2.r["var1.pred"], reset = FALSE, breaks = "equal", main = "NO2 conc.")
 st_geometry(no2.sf) |> plot(add = TRUE, col = 'green', pch = 16)
 st_geometry(de) |> plot(add = TRUE, border = "yellow")
@@ -199,7 +198,7 @@ st_geometry(de) |> plot(add = TRUE, border = "yellow")
 Point densities:
 ```{r}
 library(spatstat)
-d = density(as.ppp(no2.sf["NO2"], as.owin(de))) |> st_as_stars()
+d = density(as.ppp(st_geometry(no2.sf), as.owin(de))) |> st_as_stars()
 plot(d, reset = FALSE, main = "station density")
 st_geometry(no2.sf) |> plot(add = TRUE, col = 'green', pch = 16)
 st_geometry(de) |> plot(add = TRUE, border = "yellow")
@@ -304,8 +303,8 @@ resolution high frequent data (e.g. from sattelites).
 b1 |> st_set_crs(NA) |> st_area()
 b2 |> st_set_crs(NA) |> st_area()
 ```
-3. From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? 
-4. Check whether this is the case using `st_is_valid()`. Which geometries are not valid? Can you make them valid?
+3. From looking at the plate carree map of the world countries, from which geometries could you already tell, by looking, that they will be not _valid_ when considered on the sphere? 
+4. Check whether this is the case using `st_is_valid()`. Which geometries are not valid? Can you make all of them valid (`st_make_valid()`)?
 5. Try the area-weighted example above using `extensive = TRUE`. What does this mean? Which quantity is preserved now?
 6. Try sampling the territory of Canada (from `ne_countries()`) using random sampling and a sample size of 500. Plot the points along with the country outline. Are the points randomly distributed on the plot?
 7. In the `nc` dataset, for the variables "Number of Births" and "Fraction of non-white births", are these variables spatially extensive of intensive?

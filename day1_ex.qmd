@@ -1,0 +1,18 @@
+```{r}
+library(sf)
+library(rnaturalearth)
+par(mar = c(2,2,0,0) + .1)
+ne = ne_countries() |> st_geometry()
+plot(ne, axes = TRUE)
+
+ne |> st_transform("+proj=eqc") |> plot(axes = TRUE)
+
+ne |> st_transform("+proj=eck4") |> plot(axes = TRUE)
+
+
+ne |> st_transform("+proj=ortho") |> plot(axes = TRUE)
+
+ne |> st_transform("+proj=ortho +lon_0=180") |> plot(axes = TRUE)
+
+# ne |> st_transform("+proj=merc +lon_0=0") |> plot(axes = TRUE)
+```

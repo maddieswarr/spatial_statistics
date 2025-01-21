@@ -1,0 +1,114 @@
+### In the first st_buffer example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?
+```{r}
+library(sf)
+pt = st_point(c(0,0))
+nQuadSegs = 30
+repeat { 
+  nQuadSegs = nQuadSegs + 1
+  b = st_buffer(pt, 1, nQuadSegs = nQuadSegs)
+  if (pi - st_area(b) < 0.0001)
+    break
+} 
+nQuadSegs
+```
+
+### Why are the circular buffers computed in the section on spherical geometry of unequal size? Why does it become when removing the coordinate reference system, as in
+```
+b1 |> st_set_crs(NA) |> st_area()
+# [1] 314
+b2 |> st_set_crs(NA) |> st_area()
+# [1] 314
+```
+
+A: because they are computed in $R^2$, where area is computed on $S^2$; when removing the reference system,
+R/sf assume Cartesian coordinate ("engineering coordinates").
+
+
+### From looking at the plate carree map of the world, from which geometries can you already tell that they will be not valid when considered on the sphere?
+
+A: Maybe Russia, Maybe Antarctica.
+
+### Check whether this is the case using st_is_valid(). Which geometries are not valid? Can you make them valid?
+
+```{r}
+library(rnaturalearth)
+ne = ne_countries()
+which(!st_is_valid(ne))
+sf_use_s2(FALSE)
+any(!st_is_valid(ne))
+sf_use_s2(TRUE)
+```
+
+### Try the area-weighted example above using extensive = TRUE. What does this mean? Which quantity is preserved now?
+
+```{r}
+set.seed(1355) # make reproducible
+library(stars)
+L7 = st_as_stars(L7_ETMs)
+bb = st_bbox(L7) |> st_as_sfc()
+p = st_sample(bb, 200)
+st_combine(p) |> st_voronoi() |> st_collection_extract("POLYGON") |> st_crop(bb) -> v
+aa = aggregate(L7, v, mean)
+st_bbox(L7) |> st_as_stars(nx = 10, ny = 10) -> p
+aw = st_interpolate_aw(aa, p, extensive = TRUE)
+plot(aw, key.pos = 1)
+sum(aa[,,1][[1]])
+sum(aw$L7_ETMs.V1)
+```
+
+Sums are preserved
+
+### Try sampling the territory of Canada (from ne_countries()) using random sampling and a sample size of 500. Plot the points along with the country outline. Are the points randomly distributed on the plot?
+```{r}
+library(rnaturalearth)
+ne = ne_countries()
+which(ne$admin == "Canada")
+# st_sample(ne[4,], 500, "Fibonacci")
+p = st_sample(ne[4,], 500)
+plot(p, axes = TRUE)
+plot(st_geometry(ne)[4], add = TRUE)
+```
+
+### In the nc dataset, for the variables “Number of Births” and “Fraction of non-white births”, are these variables spatially extensive of intensive?
+
+A: number: extensive; fraction: intensive.
+
+### In the station density map shown above, what is the unit of measurement of the values shown?
+
+Number of stations per unit area ($m^{-2}$). Check:
+
+```{r}
+library(spatstat)
+library(stars)
+no2 <- read.csv(system.file("external/no2.csv", package = "gstat"))
+crs <- st_crs("EPSG:32632")
+st_as_sf(no2, crs = "OGC:CRS84", coords =
+    c("station_longitude_deg", "station_latitude_deg")) |>
+    st_transform(crs) -> no2.sf
+de.sf = read_sf("de_nuts1.gpkg")
+de.sf |> st_transform(crs) -> de
+d = density(as.ppp(st_geometry(no2.sf), as.owin(de))) |> st_as_stars()
+st_dimensions(d)
+cell = st_dimensions(d)$x$delta * st_dimensions(d)$y$delta # area size of a single
+sum(d[[1]], na.rm = TRUE) * cell  # roughly equal to n=74
+nrow(no2)
+```
+
+### For the NO2 concentration map shown above, compute the (multi-)polygon for which interpolated values are above 15.
+```{r}
+no2 <- read.csv(system.file("external/no2.csv", package = "gstat"))
+crs <- st_crs("EPSG:32632")
+st_as_sf(no2, crs = "OGC:CRS84", coords =
+    c("station_longitude_deg", "station_latitude_deg")) |>
+    st_transform(crs) -> no2.sf
+de.sf |> st_transform(crs) -> de
+template = st_as_stars(st_bbox(de), dx = units::set_units(10, km)) # 10 km x 10 km
+de.r_utm = st_rasterize(de, template) 
+# de.r_utm$mask = ifelse(as.numeric(de.r_utm[[1]]) == 0, NA, 1)
+library(gstat)
+no2.r = gstat::idw(NO2~1, no2.sf, de.r_utm) |> st_crop(de)
+no2.r$above = ifelse(no2.r$var1.pred > 15, TRUE, NA)
+st_as_sf(no2.r["above"], as_points = FALSE) |> st_union() -> u
+plot(no2.r, reset=FALSE, breaks = 'equal')
+plot(u, add = TRUE, col = '#ff000033')
+```
