@@ -199,8 +199,6 @@ window.Quarto = {
   <li><a href="#checking-homogeneity" id="toc-checking-homogeneity" class="nav-link" data-scroll-target="#checking-homogeneity">Checking homogeneity</a></li>
   <li><a href="#estimating-density" id="toc-estimating-density" class="nav-link" data-scroll-target="#estimating-density">Estimating density</a></li>
   <li><a href="#assessing-interactions-clusteringinhibition" id="toc-assessing-interactions-clusteringinhibition" class="nav-link" data-scroll-target="#assessing-interactions-clusteringinhibition">Assessing interactions: clustering/inhibition</a></li>
-  <li><a href="#fitting-models-to-clustered-data" id="toc-fitting-models-to-clustered-data" class="nav-link" data-scroll-target="#fitting-models-to-clustered-data">Fitting models to clustered data</a></li>
-  <li><a href="#maxent-and-species-distribution-modelling" id="toc-maxent-and-species-distribution-modelling" class="nav-link" data-scroll-target="#maxent-and-species-distribution-modelling">MaxEnt and species distribution modelling</a></li>
   </ul>
 </li>
   <li>
@@ -293,7 +291,8 @@ window.Quarto = {
 </div>
 <p>Or does it have a non-constant intensity, but otherwise independent points?</p>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ppi</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rpoispp.html">rpoispp</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">...</span><span class="op">)</span> <span class="fl">500</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1357</span><span class="op">)</span></span>
+<span><span class="va">ppi</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rpoispp.html">rpoispp</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">...</span><span class="op">)</span> <span class="fl">500</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ppi</span>, main <span class="op">=</span> <span class="st">"inhomogeneous"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
@@ -326,6 +325,7 @@ window.Quarto = {
 <p>or a combination:</p>
 <div class="cell">
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#ff &lt;- function(x,y) { 4 * exp(2 * abs(x) - 1) }</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1357</span><span class="op">)</span></span>
 <span><span class="va">ff</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="fl">10</span> <span class="op">*</span> <span class="va">x</span></span>
 <span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.geom/man/as.im.html">as.im</a></span><span class="op">(</span><span class="va">ff</span>, <span class="fu"><a href="https://rdrr.io/pkg/spatstat.geom/man/owin.html">owin</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rMatClust.html">rMatClust</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0.05</span>, <span class="va">Z</span><span class="op">)</span></span>
@@ -362,7 +362,7 @@ window.Quarto = {
 <span><span class="co">#   Chi-squared test of CSR using quadrat counts</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># data:  ppi</span></span>
-<span><span class="co"># X2 = 81, df = 24, p-value = 8e-08</span></span>
+<span><span class="co"># X2 = 88, df = 24, p-value = 6e-09</span></span>
 <span><span class="co"># alternative hypothesis: two.sided</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># Quadrats: 5 by 5 grid of tiles</span></span>
@@ -530,60 +530,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-</section><section id="fitting-models-to-clustered-data" class="level3"><h3 class="anchored" data-anchor-id="fitting-models-to-clustered-data">Fitting models to clustered data</h3>
-<div class="cell">
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># assuming Inhomogeneous Poisson:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/ppm.html">ppm</a></span><span class="op">(</span><span class="va">ppi</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="co"># Nonstationary Poisson process</span></span>
-<span><span class="co"># Fitted to point pattern dataset 'ppi'</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Log intensity:  ~x</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Fitted trend coefficients:</span></span>
-<span><span class="co"># (Intercept)           x </span></span>
-<span><span class="co">#        4.33        1.96 </span></span>
-<span><span class="co"># </span></span>
-<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest  Zval</span></span>
-<span><span class="co"># (Intercept)     4.33 0.174    3.99    4.67   *** 24.91</span></span>
-<span><span class="co"># x               1.96 0.247    1.48    2.45   ***  7.96</span></span>
-<span><span class="co"># assuming Inhomogeneous clustered:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/kppm.html">kppm</a></span><span class="op">(</span><span class="va">Y</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="co"># Inhomogeneous cluster point process model</span></span>
-<span><span class="co"># Fitted to point pattern dataset 'Y'</span></span>
-<span><span class="co"># Fitted by minimum contrast</span></span>
-<span><span class="co">#   Summary statistic: inhomogeneous K-function</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Log intensity:  ~x</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Fitted trend coefficients:</span></span>
-<span><span class="co"># (Intercept)           x </span></span>
-<span><span class="co">#        3.69        1.47 </span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Cluster model: Thomas process</span></span>
-<span><span class="co"># Fitted cluster parameters:</span></span>
-<span><span class="co"># kappa scale </span></span>
-<span><span class="co"># 7.731 0.038 </span></span>
-<span><span class="co"># Mean cluster size:  [pixel image]</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Cluster strength: phi =  7.122</span></span>
-<span><span class="co"># Sibling probability: psib =  0.8769</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section><section id="maxent-and-species-distribution-modelling" class="level3"><h3 class="anchored" data-anchor-id="maxent-and-species-distribution-modelling">MaxEnt and species distribution modelling</h3>
-<p>It seems that <a href="https://biodiversityinformatics.amnh.org/open_source/maxent/">MaxEnt</a> fits an <a href="https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049">inhomogeneous Poisson process</a></p>
-<p>Starting from presence (only) observations, it</p>
-<ul>
-<li>adds background (absence) points, uniformly <em>in space</em>
-</li>
-<li>fits logistic regression models to the 0/1 data, using environmental covariates</li>
-<li>ignores spatial interactions, spatial distances</li>
-</ul>
-<p>R package <a href="https://cran.r-project.org/web/packages/maxnet/index.html">maxnet</a> does that using glmnet (lasso or elasticnet regularization on)</p>
-<p>A maxnet example <a href="https://github.com/BigelowLab/maxnet/wiki/stars">using stars</a> is available in the development version, which can be installed directly from github by <code>remotes::install_github("mrmaxent/maxnet")</code> ; and the same <a href="https://github.com/BigelowLab/maxnet/wiki/terra">maxnet example using terra</a> (thanks to Ben Tupper).</p>
-<p>Relevant papers:</p>
-<ul>
-<li>a paper detailing the equivalence and differences between point pattern models and MaxEnt is found <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12352">here</a>.</li>
-<li><a href="https://doi.org/10.1111/j.1472-4642.2010.00725.x">A statistical explanation of MaxEnt for Ecologists</a></li>
-</ul></section></section><section id="spatial-correlation-for-geostatistical-data" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="spatial-correlation-for-geostatistical-data">
+</section></section><section id="spatial-correlation-for-geostatistical-data" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="spatial-correlation-for-geostatistical-data">
 <span class="header-section-number">3.2</span> Spatial correlation for geostatistical data</h2>
 <section id="gstat" class="level3"><h3 class="anchored" data-anchor-id="gstat"><code>gstat</code></h3>
 <p>R package <code>gstat</code> was written in 2002/3, from a stand-alone C program that was released under the GPL in 1997. It implements “basic” geostatistical functions for modelling spatial dependence (variograms), kriging interpolation and conditional simulation. It can be used for multivariable kriging (cokriging), as well as for spatiotemporal variography and kriging. Recent updates included support for <code>sf</code> and <code>stars</code> objects.</p>
@@ -597,7 +544,7 @@ window.Quarto = {
 <li>The actual sample locations are not of (primary) interest, the signal is in the measured values</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
 <span><span class="co"># Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span></span>
 <span><span class="va">no2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"external/no2.csv"</span>,</span>
 <span>    package <span class="op">=</span> <span class="st">"gstat"</span><span class="op">)</span><span class="op">)</span></span>
@@ -614,7 +561,7 @@ window.Quarto = {
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">no2.sf</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">NO2</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -623,7 +570,7 @@ window.Quarto = {
 <section id="lagged-scatterplots" class="level4"><h4 class="anchored" data-anchor-id="lagged-scatterplots">Lagged scatterplots</h4>
 <p>“by hand”, base R:</p>
 <div class="cell">
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">w</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html">st_is_within_distance</a></span><span class="op">(</span><span class="va">no2.sf</span>, <span class="va">no2.sf</span>, <span class="fu">units</span><span class="fu">::</span><span class="fu"><a href="https://r-quantities.github.io/units/reference/units.html">set_units</a></span><span class="op">(</span><span class="fl">50</span>, <span class="va">km</span><span class="op">)</span>, </span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">w</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html">st_is_within_distance</a></span><span class="op">(</span><span class="va">no2.sf</span>, <span class="va">no2.sf</span>, <span class="fu">units</span><span class="fu">::</span><span class="fu"><a href="https://r-quantities.github.io/units/reference/units.html">set_units</a></span><span class="op">(</span><span class="fl">50</span>, <span class="va">km</span><span class="op">)</span>, </span>
 <span>                          retain_unique <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Sparse geometry binary predicate list of length 74, where</span></span>
 <span><span class="co"># the predicate was `is_within_distance', with retain_unique =</span></span>
@@ -648,14 +595,14 @@ window.Quarto = {
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>using gstat:</p>
 <div class="cell">
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/gstat/">gstat</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/gstat/">gstat</a></span><span class="op">)</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># Attaching package: 'gstat'</span></span>
 <span><span class="co"># The following object is masked from 'package:spatstat.explore':</span></span>
@@ -664,7 +611,7 @@ window.Quarto = {
 <span><span class="fu"><a href="https://r-spatial.github.io/gstat/reference/hscat.html">hscat</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">50</span>,<span class="fl">100</span>,<span class="fl">150</span>,<span class="fl">200</span>,<span class="fl">250</span><span class="op">)</span><span class="op">*</span><span class="fl">1000</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -691,7 +638,7 @@ h \in \tilde{h}\]</span></p>
 </ul>
 <p>We can compute a variogram “by hand”, using base R:</p>
 <div class="cell">
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">z</span> <span class="op">=</span> <span class="va">no2.sf</span><span class="op">$</span><span class="va">NO2</span></span>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">z</span> <span class="op">=</span> <span class="va">no2.sf</span><span class="op">$</span><span class="va">NO2</span></span>
 <span><span class="va">z2</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/outer.html">outer</a></span><span class="op">(</span><span class="va">z</span>, <span class="va">z</span>, FUN <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span> <span class="co"># (Z(s)-Z(s+h))^2</span></span>
 <span><span class="va">d</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html">st_distance</a></span><span class="op">(</span><span class="va">no2.sf</span><span class="op">)</span><span class="op">)</span>  <span class="co"># h</span></span>
 <span><span class="va">vcloud</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>dist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>, gamma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="va">z2</span><span class="op">)</span><span class="op">)</span></span>
@@ -701,21 +648,44 @@ h \in \tilde{h}\]</span></p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">gamma</span> <span class="op">~</span> <span class="va">dclass</span>, <span class="va">v</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>using gstat:</p>
 <div class="cell">
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vv</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/variogram.html">variogram</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span>, width <span class="op">=</span> <span class="fl">50000</span>, cutoff <span class="op">=</span> <span class="fl">350000</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vv</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/variogram.html">variogram</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span>, width <span class="op">=</span> <span class="fl">50000</span>, cutoff <span class="op">=</span> <span class="fl">350000</span><span class="op">)</span></span>
 <span><span class="va">vv</span><span class="op">$</span><span class="va">gamma</span> <span class="op">-</span> <span class="va">v</span><span class="op">$</span><span class="va">gamma</span></span>
 <span><span class="co"># [1]  3.55e-15 -3.55e-15  5.33e-15 -5.33e-15  7.11e-15 -1.42e-14</span></span>
 <span><span class="co"># [7]  5.33e-15</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">vv</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="fit-a-variogram-model" class="level4"><h4 class="anchored" data-anchor-id="fit-a-variogram-model">Fit a variogram model</h4>
+<div class="cell">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The sample variogram:</span></span>
+<span><span class="va">v</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/variogram.html">variogram</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
 <figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>fit a model, e.g.&nbsp;an exponential model:</p>
+<div class="cell">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">v.fit</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/fit.variogram.html">fit.variogram</a></span><span class="op">(</span><span class="va">v</span>, <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/vgm.html">vgm</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"Exp"</span>, <span class="fl">50000</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">v</span>, <span class="va">v.fit</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -724,7 +694,7 @@ h \in \tilde{h}\]</span></p>
 <span class="header-section-number">3.3</span> Spatial correlation in lattice data</h2>
 <section id="analysing-lattice-data-neighbours-weights-models" class="level3"><h3 class="anchored" data-anchor-id="analysing-lattice-data-neighbours-weights-models">Analysing lattice data: neighbours, weights, models</h3>
 <div class="cell">
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">pol_pres15</span>, package <span class="op">=</span> <span class="st">"spDataLarge"</span><span class="op">)</span></span>
 <span><span class="va">pol_pres15</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">TERYT</span>, <span class="va">name</span>, <span class="va">types</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -752,14 +722,14 @@ h \in \tilde{h}\]</span></p>
 <span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html">tm_fill</a></span><span class="op">(</span><span class="st">"types"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We need to make the geometries valid first,</p>
 <div class="cell">
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/valid.html">st_is_valid</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/valid.html">st_is_valid</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># [1] FALSE</span></span>
 <span><span class="va">pol_pres15</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/valid.html">st_make_valid</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/valid.html">st_is_valid</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -767,7 +737,7 @@ h \in \tilde{h}\]</span></p>
 </div>
 <p>First, we will consider polygons in relationship to their direct neighbours</p>
 <div class="cell">
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/">spdep</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/">spdep</a></span><span class="op">)</span></span>
 <span><span class="co"># Loading required package: spData</span></span>
 <span><span class="va">pol_pres15</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html">poly2nb</a></span><span class="op">(</span>queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">nb_q</span></span>
 <span><span class="va">nb_q</span></span>
@@ -779,11 +749,11 @@ h \in \tilde{h}\]</span></p>
 </div>
 <p>Is the graph connected?</p>
 <div class="cell">
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">nb_q</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/compon.html">n.comp.nb</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">nc</span></span>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">nb_q</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/compon.html">n.comp.nb</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">nc</span></span>
 <span><span class="co"># [1] 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pol_pres15</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_centroid</a></span><span class="op">(</span>of_largest_polygon <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">coords</span></span>
@@ -791,7 +761,7 @@ h \in \tilde{h}\]</span></p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">nb_q</span>, coords <span class="op">=</span> <span class="va">coords</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, points <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -806,7 +776,7 @@ h \in \tilde{h}\]</span></p>
 <section id="weights-matrices" class="level4"><h4 class="anchored" data-anchor-id="weights-matrices">Weights matrices</h4>
 <p>Weight matrices are needed in analysis, they determine how observations (or residuals) are weighted in a regression model.</p>
 <div class="cell">
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">nb_q</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html">nb2listw</a></span><span class="op">(</span>style <span class="op">=</span> <span class="st">"B"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">lw_q_B</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">nb_q</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html">nb2listw</a></span><span class="op">(</span>style <span class="op">=</span> <span class="st">"B"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">lw_q_B</span><span class="op">)</span></span>
 <span><span class="co"># Characteristics of weights list object:</span></span>
 <span><span class="co"># Neighbour list object:</span></span>
 <span><span class="co"># Number of regions: 2495 </span></span>
@@ -826,7 +796,7 @@ I = \frac{n \sum_{(2)} w_{ij} z_i z_j}{S_0 \sum_{i=1}^{n} z_i^2}
 \]</span> where <span class="math inline">\(x_i, i=1, \ldots, n\)</span> are <span class="math inline">\(n\)</span> observations on the numeric variable of interest, <span class="math inline">\(z_i = x_i - \bar{x}\)</span>, <span class="math inline">\(\bar{x} = \sum_{i=1}^{n} x_i / n\)</span>, <span class="math inline">\(\sum_{(2)} = \stackrel{\sum_{i=1}^{n} \sum_{j=1}^{n}}{i \neq j}\)</span>, <span class="math inline">\(w_{ij}\)</span> are the spatial weights, and <span class="math inline">\(S_0 = \sum_{(2)} w_{ij}\)</span>.</p>
 <p>We can compute it as</p>
 <div class="cell">
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pol_pres15</span><span class="op">$</span><span class="va">I_turnout</span> <span class="op">|&gt;</span></span>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pol_pres15</span><span class="op">$</span><span class="va">I_turnout</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/moran.test.html">moran.test</a></span><span class="op">(</span><span class="va">lw_q_B</span>, randomisation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>               alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
 <span><span class="co"># </span></span>
@@ -843,14 +813,14 @@ I = \frac{n \sum_{(2)} w_{ij} z_i z_j}{S_0 \sum_{i=1}^{n} z_i^2}
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">[</span><span class="st">"I_turnout"</span><span class="op">]</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>A simple linear regression model, assuming independent observations, can be carried out using <code>lm</code>:</p>
 <div class="cell">
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">$</span><span class="va">I_entitled_to_vote</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">$</span><span class="va">I_entitled_to_vote</span><span class="op">)</span></span>
 <span><span class="co">#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span><span class="co">#    1308    4026    6033   12221   10524  594643</span></span>
 <span><span class="op">(</span><span class="va">lm0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">I_turnout</span> <span class="op">~</span> <span class="va">I_entitled_to_vote</span>, <span class="va">pol_pres15</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -876,14 +846,14 @@ I = \frac{n \sum_{(2)} w_{ij} z_i z_j}{S_0 \sum_{i=1}^{n} z_i^2}
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">pol_pres15</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day3_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>A spatial linear regression model (SEM: spatial error model), assuming independent observations, can be carried out using <code>lm</code>:</p>
 <div class="cell">
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">form</span> <span class="op">=</span> <span class="va">I_turnout</span> <span class="op">~</span> <span class="va">I_entitled_to_vote</span></span>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">form</span> <span class="op">=</span> <span class="va">I_turnout</span> <span class="op">~</span> <span class="va">I_entitled_to_vote</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spatialreg/">spatialreg</a></span><span class="op">)</span></span>
 <span><span class="co"># Loading required package: Matrix</span></span>
 <span><span class="co"># </span></span>
@@ -1444,359 +1414,347 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb33" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># inference: spatial correlation, fitting models</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation for point patterns, </span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### Intro to `spatstat`</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>Consider a point pattern that consist of</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>a set of known coordinates</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>an observation window</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>We can ask ourselves: our point **pattern** be a realisation of a *completely spatially random* (CSR) **process**? A CSR process has</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>a spatially constant intensity (*mean*: first order property)</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>completely independent locations (*interactions*: second order property)</span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>e.g.</span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">13431</span>)</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>CSR <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="dv">100</span>)</span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(CSR)</span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>Or does it have a non-constant intensity, but otherwise independent points?</span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>ppi <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="cf">function</span>(x,y,...) <span class="dv">500</span> <span class="sc">*</span> x)</span>
-<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ppi, <span class="at">main =</span> <span class="st">"inhomogeneous"</span>)</span>
-<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>Or does it have constant intensity, but dependent points:</span>
-<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">rThomas</span>(<span class="dv">100</span>, .<span class="dv">02</span>, <span class="dv">5</span>)</span>
-<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cl, <span class="at">main =</span> <span class="st">"clustered"</span>)</span>
-<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">rHardcore</span>(<span class="fl">0.05</span>,<span class="fl">1.5</span>,<span class="fu">square</span>(<span class="dv">50</span>)) </span>
-<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hc, <span class="at">main =</span> <span class="st">"inhibition"</span>)</span>
-<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>or a combination:</span>
-<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a><span class="co">#ff &lt;- function(x,y) { 4 * exp(2 * abs(x) - 1) }</span></span>
-<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a>ff <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y) <span class="dv">10</span> <span class="sc">*</span> x</span>
-<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">as.im</span>(ff, <span class="fu">owin</span>())</span>
-<span id="cb33-61"><a href="#cb33-61" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rMatClust</span>(<span class="dv">10</span>, <span class="fl">0.05</span>, Z)</span>
-<span id="cb33-62"><a href="#cb33-62" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Y)</span>
-<span id="cb33-63"><a href="#cb33-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-64"><a href="#cb33-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-65"><a href="#cb33-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### Checking homogeneity</span></span>
-<span id="cb33-66"><a href="#cb33-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-69"><a href="#cb33-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-70"><a href="#cb33-70" aria-hidden="true" tabindex="-1"></a>(<span class="at">q =</span> <span class="fu">quadrat.test</span>(CSR))</span>
-<span id="cb33-71"><a href="#cb33-71" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q)</span>
-<span id="cb33-72"><a href="#cb33-72" aria-hidden="true" tabindex="-1"></a>(<span class="at">q =</span> <span class="fu">quadrat.test</span>(ppi))</span>
-<span id="cb33-73"><a href="#cb33-73" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q)</span>
-<span id="cb33-74"><a href="#cb33-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-75"><a href="#cb33-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-76"><a href="#cb33-76" aria-hidden="true" tabindex="-1"></a><span class="fu">### Estimating density</span></span>
-<span id="cb33-77"><a href="#cb33-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-78"><a href="#cb33-78" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>main parameter: bandwidth (<span class="in">`sigma`</span>): determines the amound of smoothing.</span>
-<span id="cb33-79"><a href="#cb33-79" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>if <span class="in">`sigma`</span> is not specified: uses <span class="in">`bw.diggle`</span>, an automatically tuned bandwidth</span>
-<span id="cb33-80"><a href="#cb33-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-81"><a href="#cb33-81" aria-hidden="true" tabindex="-1"></a>Correction for <span class="in">`edge`</span> effect?</span>
-<span id="cb33-82"><a href="#cb33-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-85"><a href="#cb33-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-86"><a href="#cb33-86" aria-hidden="true" tabindex="-1"></a><span class="fu">density</span>(CSR) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-87"><a href="#cb33-87" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(CSR, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>)</span>
-<span id="cb33-88"><a href="#cb33-88" aria-hidden="true" tabindex="-1"></a><span class="fu">density</span>(ppi) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-89"><a href="#cb33-89" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ppi, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>)</span>
-<span id="cb33-90"><a href="#cb33-90" aria-hidden="true" tabindex="-1"></a><span class="fu">density</span>(ppi, <span class="at">sigma =</span> .<span class="dv">05</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-91"><a href="#cb33-91" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ppi, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>)</span>
-<span id="cb33-92"><a href="#cb33-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-93"><a href="#cb33-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-94"><a href="#cb33-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assessing interactions: clustering/inhibition</span></span>
-<span id="cb33-95"><a href="#cb33-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-96"><a href="#cb33-96" aria-hidden="true" tabindex="-1"></a>The K-function ("Ripley's K") is the expected number of additional random (CSR) points within a distance r of a typical random point in the observation window.</span>
-<span id="cb33-97"><a href="#cb33-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-98"><a href="#cb33-98" aria-hidden="true" tabindex="-1"></a>The G-function (nearest neighbour distance distribution) is the cumulative distribution function G of the distance from a typical random point of X to the nearest other point of X.</span>
-<span id="cb33-99"><a href="#cb33-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-102"><a href="#cb33-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-103"><a href="#cb33-103" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(CSR, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-104"><a href="#cb33-104" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(cl, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-105"><a href="#cb33-105" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(hc, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-106"><a href="#cb33-106" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(ppi, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-107"><a href="#cb33-107" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(ppi, Linhom) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-108"><a href="#cb33-108" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(Y , Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-109"><a href="#cb33-109" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(Y , Linhom) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb33-110"><a href="#cb33-110" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-111"><a href="#cb33-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-112"><a href="#cb33-112" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitting models to clustered data</span></span>
-<span id="cb33-113"><a href="#cb33-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-116"><a href="#cb33-116" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-117"><a href="#cb33-117" aria-hidden="true" tabindex="-1"></a><span class="co"># assuming Inhomogeneous Poisson:</span></span>
-<span id="cb33-118"><a href="#cb33-118" aria-hidden="true" tabindex="-1"></a><span class="fu">ppm</span>(ppi, <span class="sc">~</span>x)</span>
-<span id="cb33-119"><a href="#cb33-119" aria-hidden="true" tabindex="-1"></a><span class="co"># assuming Inhomogeneous clustered:</span></span>
-<span id="cb33-120"><a href="#cb33-120" aria-hidden="true" tabindex="-1"></a><span class="fu">kppm</span>(Y, <span class="sc">~</span>x)</span>
-<span id="cb33-121"><a href="#cb33-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-122"><a href="#cb33-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-123"><a href="#cb33-123" aria-hidden="true" tabindex="-1"></a><span class="fu">### MaxEnt and species distribution modelling</span></span>
-<span id="cb33-124"><a href="#cb33-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-125"><a href="#cb33-125" aria-hidden="true" tabindex="-1"></a>It seems that <span class="co">[</span><span class="ot">MaxEnt</span><span class="co">](https://biodiversityinformatics.amnh.org/open_source/maxent/)</span> fits an <span class="co">[</span><span class="ot">inhomogeneous Poisson process</span><span class="co">](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049)</span></span>
-<span id="cb33-126"><a href="#cb33-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-127"><a href="#cb33-127" aria-hidden="true" tabindex="-1"></a>Starting from presence (only) observations, it</span>
-<span id="cb33-128"><a href="#cb33-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-129"><a href="#cb33-129" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>adds background (absence) points, uniformly *in space*</span>
-<span id="cb33-130"><a href="#cb33-130" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>fits logistic regression models to the 0/1 data, using environmental covariates</span>
-<span id="cb33-131"><a href="#cb33-131" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>ignores spatial interactions, spatial distances</span>
-<span id="cb33-132"><a href="#cb33-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-133"><a href="#cb33-133" aria-hidden="true" tabindex="-1"></a>R package <span class="co">[</span><span class="ot">maxnet</span><span class="co">](https://cran.r-project.org/web/packages/maxnet/index.html)</span> does that using glmnet (lasso or elasticnet regularization on)</span>
-<span id="cb33-134"><a href="#cb33-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-135"><a href="#cb33-135" aria-hidden="true" tabindex="-1"></a>A maxnet example <span class="co">[</span><span class="ot">using stars</span><span class="co">](https://github.com/BigelowLab/maxnet/wiki/stars)</span> is available in the development version, which can be installed directly from github by <span class="in">`remotes::install_github("mrmaxent/maxnet")`</span> ; and the same <span class="co">[</span><span class="ot">maxnet example using terra</span><span class="co">](https://github.com/BigelowLab/maxnet/wiki/terra)</span> (thanks to Ben Tupper).</span>
-<span id="cb33-136"><a href="#cb33-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-137"><a href="#cb33-137" aria-hidden="true" tabindex="-1"></a>Relevant papers:</span>
-<span id="cb33-138"><a href="#cb33-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-139"><a href="#cb33-139" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>a paper detailing the equivalence and differences between point pattern models and MaxEnt is found <span class="co">[</span><span class="ot">here</span><span class="co">](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12352)</span>.</span>
-<span id="cb33-140"><a href="#cb33-140" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">A statistical explanation of MaxEnt for Ecologists</span><span class="co">](https://doi.org/10.1111/j.1472-4642.2010.00725.x)</span></span>
-<span id="cb33-141"><a href="#cb33-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-142"><a href="#cb33-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-143"><a href="#cb33-143" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation for geostatistical data</span></span>
-<span id="cb33-144"><a href="#cb33-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-145"><a href="#cb33-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### `gstat`</span></span>
-<span id="cb33-146"><a href="#cb33-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-147"><a href="#cb33-147" aria-hidden="true" tabindex="-1"></a>R package <span class="in">`gstat`</span> was written in 2002/3, from a stand-alone C program that was released under the GPL in 1997. It implements "basic" geostatistical functions for modelling spatial dependence (variograms), kriging interpolation and conditional simulation. It can be used for multivariable kriging (cokriging), as well as for spatiotemporal variography and kriging. Recent updates included support for <span class="in">`sf`</span> and <span class="in">`stars`</span> objects.</span>
-<span id="cb33-148"><a href="#cb33-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-149"><a href="#cb33-149" aria-hidden="true" tabindex="-1"></a><span class="fu">### What are geostatistical data?</span></span>
-<span id="cb33-150"><a href="#cb33-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-151"><a href="#cb33-151" aria-hidden="true" tabindex="-1"></a>Recall from day 1: locations + measured values</span>
-<span id="cb33-152"><a href="#cb33-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-153"><a href="#cb33-153" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The value of interest is measured at a set of sample locations</span>
-<span id="cb33-154"><a href="#cb33-154" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>At other location, this value exists but is *missing*</span>
-<span id="cb33-155"><a href="#cb33-155" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The interest is in estimating (predicting) this missing value (interpolation)</span>
-<span id="cb33-156"><a href="#cb33-156" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The actual sample locations are not of (primary) interest, the signal is in the measured values</span>
-<span id="cb33-157"><a href="#cb33-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-160"><a href="#cb33-160" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-161"><a href="#cb33-161" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb33-162"><a href="#cb33-162" aria-hidden="true" tabindex="-1"></a>no2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">"external/no2.csv"</span>,</span>
-<span id="cb33-163"><a href="#cb33-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">package =</span> <span class="st">"gstat"</span>))</span>
-<span id="cb33-164"><a href="#cb33-164" aria-hidden="true" tabindex="-1"></a>crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="st">"EPSG:32632"</span>) <span class="co"># a csv doesn't carry a CRS!</span></span>
-<span id="cb33-165"><a href="#cb33-165" aria-hidden="true" tabindex="-1"></a><span class="fu">st_as_sf</span>(no2, <span class="at">crs =</span> <span class="st">"OGC:CRS84"</span>, <span class="at">coords =</span></span>
-<span id="cb33-166"><a href="#cb33-166" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"station_longitude_deg"</span>, <span class="st">"station_latitude_deg"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb33-167"><a href="#cb33-167" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> no2.sf</span>
-<span id="cb33-168"><a href="#cb33-168" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb33-169"><a href="#cb33-169" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(st_geometry(no2.sf))</span></span>
-<span id="cb33-170"><a href="#cb33-170" aria-hidden="true" tabindex="-1"></a><span class="st">"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg"</span> <span class="sc">|&gt;</span></span>
-<span id="cb33-171"><a href="#cb33-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_sf</span>() <span class="sc">|&gt;</span></span>
-<span id="cb33-172"><a href="#cb33-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> de</span>
-<span id="cb33-173"><a href="#cb33-173" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">data =</span> de) <span class="sc">+</span></span>
-<span id="cb33-174"><a href="#cb33-174" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">data =</span> no2.sf, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">col =</span> NO2))</span>
-<span id="cb33-175"><a href="#cb33-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-176"><a href="#cb33-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-177"><a href="#cb33-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### Spatial correlation</span></span>
-<span id="cb33-178"><a href="#cb33-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-179"><a href="#cb33-179" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Lagged scatterplots</span></span>
-<span id="cb33-180"><a href="#cb33-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-181"><a href="#cb33-181" aria-hidden="true" tabindex="-1"></a>"by hand", base R:</span>
-<span id="cb33-182"><a href="#cb33-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-185"><a href="#cb33-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-186"><a href="#cb33-186" aria-hidden="true" tabindex="-1"></a>(<span class="at">w =</span> <span class="fu">st_is_within_distance</span>(no2.sf, no2.sf, units<span class="sc">::</span><span class="fu">set_units</span>(<span class="dv">50</span>, km), </span>
-<span id="cb33-187"><a href="#cb33-187" aria-hidden="true" tabindex="-1"></a>                          <span class="at">retain_unique =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb33-188"><a href="#cb33-188" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">as.data.frame</span>(w)</span>
-<span id="cb33-189"><a href="#cb33-189" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> no2.sf<span class="sc">$</span>NO2[d<span class="sc">$</span>row.id]</span>
-<span id="cb33-190"><a href="#cb33-190" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> no2.sf<span class="sc">$</span>NO2[d<span class="sc">$</span>col.id]</span>
-<span id="cb33-191"><a href="#cb33-191" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(x, y)</span>
-<span id="cb33-192"><a href="#cb33-192" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">main =</span> <span class="st">"lagged scatterplot"</span>)</span>
-<span id="cb33-193"><a href="#cb33-193" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb33-194"><a href="#cb33-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-195"><a href="#cb33-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-196"><a href="#cb33-196" aria-hidden="true" tabindex="-1"></a>using gstat:</span>
-<span id="cb33-197"><a href="#cb33-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-200"><a href="#cb33-200" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-201"><a href="#cb33-201" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
-<span id="cb33-202"><a href="#cb33-202" aria-hidden="true" tabindex="-1"></a><span class="fu">hscat</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">150</span>,<span class="dv">200</span>,<span class="dv">250</span>)<span class="sc">*</span><span class="dv">1000</span>)</span>
-<span id="cb33-203"><a href="#cb33-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-204"><a href="#cb33-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-205"><a href="#cb33-205" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Variogram</span></span>
-<span id="cb33-206"><a href="#cb33-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-207"><a href="#cb33-207" aria-hidden="true" tabindex="-1"></a>When we assume $Z(s)$ has a constant and unknown mean, the spatial dependence can be described by the variogram, defined as $\gamma(h)</span>
-<span id="cb33-208"><a href="#cb33-208" aria-hidden="true" tabindex="-1"></a>= 0.5 E(Z(s)-Z(s+h))^2$. If the random process $Z(s)$ has a finite variance, then the variogram is related to the covariance function $C(h)$ by $\gamma(h) = C(0)-C(h)$.</span>
-<span id="cb33-209"><a href="#cb33-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-210"><a href="#cb33-210" aria-hidden="true" tabindex="-1"></a>The variogram can be estimated from sample data by averaging squared differences: $$\hat{\gamma}(\tilde{h})=\frac{1}{2N_h}\sum_{i=1}^{N_h}(Z(s_i)-Z(s_i+h))^2 \ \</span>
-<span id="cb33-211"><a href="#cb33-211" aria-hidden="true" tabindex="-1"></a>h \in \tilde{h}$$</span>
-<span id="cb33-212"><a href="#cb33-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-213"><a href="#cb33-213" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>divide by $2N_h$:</span>
-<span id="cb33-214"><a href="#cb33-214" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>if finite, $\gamma(\infty)=\sigma^2=C(0)$</span>
-<span id="cb33-215"><a href="#cb33-215" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>*semi* variance</span>
-<span id="cb33-216"><a href="#cb33-216" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>if data are not gridded, group $N_h$ pairs $s_i,s_i+h$ for which $h \in \tilde{h}$, $\tilde{h}=<span class="co">[</span><span class="ot">h_1,h_2</span><span class="co">]</span>$</span>
-<span id="cb33-217"><a href="#cb33-217" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>rule-of-thumb: choose about 10-25 distance intervals $\tilde{h}$, from length 0 to about on third of the area size</span>
-<span id="cb33-218"><a href="#cb33-218" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>plot $\gamma$ against $\tilde{h}$ taken as the average value of all $h \in \tilde{h}$</span>
-<span id="cb33-219"><a href="#cb33-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-220"><a href="#cb33-220" aria-hidden="true" tabindex="-1"></a>We can compute a variogram "by hand", using base R:</span>
-<span id="cb33-221"><a href="#cb33-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-224"><a href="#cb33-224" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-225"><a href="#cb33-225" aria-hidden="true" tabindex="-1"></a>z <span class="ot">=</span> no2.sf<span class="sc">$</span>NO2</span>
-<span id="cb33-226"><a href="#cb33-226" aria-hidden="true" tabindex="-1"></a>z2 <span class="ot">=</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">outer</span>(z, z, <span class="at">FUN =</span> <span class="st">"-"</span>)<span class="sc">^</span><span class="dv">2</span> <span class="co"># (Z(s)-Z(s+h))^2</span></span>
-<span id="cb33-227"><a href="#cb33-227" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">as.matrix</span>(<span class="fu">st_distance</span>(no2.sf))  <span class="co"># h</span></span>
-<span id="cb33-228"><a href="#cb33-228" aria-hidden="true" tabindex="-1"></a>vcloud <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">dist =</span> <span class="fu">as.vector</span>(d), <span class="at">gamma =</span> <span class="fu">as.vector</span>(z2))</span>
-<span id="cb33-229"><a href="#cb33-229" aria-hidden="true" tabindex="-1"></a>vcloud <span class="ot">=</span> vcloud[vcloud<span class="sc">$</span>dist <span class="sc">!=</span> <span class="dv">0</span>,]</span>
-<span id="cb33-230"><a href="#cb33-230" aria-hidden="true" tabindex="-1"></a>vcloud<span class="sc">$</span>dclass <span class="ot">=</span> <span class="fu">cut</span>(vcloud<span class="sc">$</span>dist, <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>, <span class="dv">350</span>) <span class="sc">*</span> <span class="dv">1000</span>)</span>
-<span id="cb33-231"><a href="#cb33-231" aria-hidden="true" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">aggregate</span>(gamma<span class="sc">~</span>dclass, vcloud, mean)</span>
-<span id="cb33-232"><a href="#cb33-232" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gamma <span class="sc">~</span> dclass, v, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">20</span>))</span>
-<span id="cb33-233"><a href="#cb33-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-234"><a href="#cb33-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-235"><a href="#cb33-235" aria-hidden="true" tabindex="-1"></a>using gstat:</span>
-<span id="cb33-236"><a href="#cb33-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-239"><a href="#cb33-239" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-240"><a href="#cb33-240" aria-hidden="true" tabindex="-1"></a>vv <span class="ot">=</span> <span class="fu">variogram</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, <span class="at">width =</span> <span class="dv">50000</span>, <span class="at">cutoff =</span> <span class="dv">350000</span>)</span>
-<span id="cb33-241"><a href="#cb33-241" aria-hidden="true" tabindex="-1"></a>vv<span class="sc">$</span>gamma <span class="sc">-</span> v<span class="sc">$</span>gamma</span>
-<span id="cb33-242"><a href="#cb33-242" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(vv)</span>
-<span id="cb33-243"><a href="#cb33-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-244"><a href="#cb33-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-245"><a href="#cb33-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-246"><a href="#cb33-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-247"><a href="#cb33-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation in lattice data</span></span>
-<span id="cb33-248"><a href="#cb33-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-249"><a href="#cb33-249" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analysing lattice data: neighbours, weights, models</span></span>
-<span id="cb33-250"><a href="#cb33-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-253"><a href="#cb33-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-254"><a href="#cb33-254" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb33-255"><a href="#cb33-255" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pol_pres15, <span class="at">package =</span> <span class="st">"spDataLarge"</span>)</span>
-<span id="cb33-256"><a href="#cb33-256" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="sc">|&gt;</span></span>
-<span id="cb33-257"><a href="#cb33-257" aria-hidden="true" tabindex="-1"></a>    <span class="fu">subset</span>(<span class="at">select =</span> <span class="fu">c</span>(TERYT, name, types)) <span class="sc">|&gt;</span></span>
-<span id="cb33-258"><a href="#cb33-258" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>()</span>
-<span id="cb33-259"><a href="#cb33-259" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap, <span class="at">warn.conflicts =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb33-260"><a href="#cb33-260" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(pol_pres15) <span class="sc">+</span> <span class="fu">tm_fill</span>(<span class="st">"types"</span>)</span>
-<span id="cb33-261"><a href="#cb33-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-262"><a href="#cb33-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-263"><a href="#cb33-263" aria-hidden="true" tabindex="-1"></a>We need to make the geometries valid first,</span>
-<span id="cb33-266"><a href="#cb33-266" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-267"><a href="#cb33-267" aria-hidden="true" tabindex="-1"></a><span class="fu">st_is_valid</span>(pol_pres15) <span class="sc">|&gt;</span> <span class="fu">all</span>()</span>
-<span id="cb33-268"><a href="#cb33-268" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="ot">&lt;-</span> <span class="fu">st_make_valid</span>(pol_pres15)</span>
-<span id="cb33-269"><a href="#cb33-269" aria-hidden="true" tabindex="-1"></a><span class="fu">st_is_valid</span>(pol_pres15) <span class="sc">|&gt;</span> <span class="fu">all</span>()</span>
-<span id="cb33-270"><a href="#cb33-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-271"><a href="#cb33-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-272"><a href="#cb33-272" aria-hidden="true" tabindex="-1"></a>First, we will consider polygons in relationship to their direct neighbours</span>
-<span id="cb33-275"><a href="#cb33-275" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-276"><a href="#cb33-276" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
-<span id="cb33-277"><a href="#cb33-277" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="sc">|&gt;</span> <span class="fu">poly2nb</span>(<span class="at">queen =</span> <span class="cn">TRUE</span>) <span class="ot">-&gt;</span> nb_q</span>
-<span id="cb33-278"><a href="#cb33-278" aria-hidden="true" tabindex="-1"></a>nb_q</span>
-<span id="cb33-279"><a href="#cb33-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-280"><a href="#cb33-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-281"><a href="#cb33-281" aria-hidden="true" tabindex="-1"></a>Is the graph connected?</span>
-<span id="cb33-282"><a href="#cb33-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-285"><a href="#cb33-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-286"><a href="#cb33-286" aria-hidden="true" tabindex="-1"></a>(nb_q <span class="sc">|&gt;</span> <span class="fu">n.comp.nb</span>())<span class="sc">$</span>nc</span>
-<span id="cb33-287"><a href="#cb33-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-288"><a href="#cb33-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-291"><a href="#cb33-291" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-292"><a href="#cb33-292" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">4</span>))</span>
-<span id="cb33-293"><a href="#cb33-293" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="sc">|&gt;</span></span>
-<span id="cb33-294"><a href="#cb33-294" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_geometry</span>() <span class="sc">|&gt;</span></span>
-<span id="cb33-295"><a href="#cb33-295" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_centroid</span>(<span class="at">of_largest_polygon =</span> <span class="cn">TRUE</span>) <span class="ot">-&gt;</span> coords</span>
-<span id="cb33-296"><a href="#cb33-296" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(pol_pres15), <span class="at">border =</span> <span class="st">'grey'</span>)</span>
-<span id="cb33-297"><a href="#cb33-297" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nb_q, <span class="at">coords =</span> coords, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">points =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb33-298"><a href="#cb33-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-299"><a href="#cb33-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-300"><a href="#cb33-300" aria-hidden="true" tabindex="-1"></a>Alternative approaches to form neighbourhood matrices:</span>
-<span id="cb33-301"><a href="#cb33-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-302"><a href="#cb33-302" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>based on distance, e.g. setting a distance threshold or selecting a fixed number of nearest neighbours</span>
-<span id="cb33-303"><a href="#cb33-303" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>based on triangulating points, for instance polygon centroids</span>
-<span id="cb33-304"><a href="#cb33-304" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>sphere of influence, a modification of triangulation</span>
-<span id="cb33-305"><a href="#cb33-305" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>include neighbours from neighbours</span>
-<span id="cb33-306"><a href="#cb33-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-307"><a href="#cb33-307" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Weights matrices</span></span>
-<span id="cb33-308"><a href="#cb33-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-309"><a href="#cb33-309" aria-hidden="true" tabindex="-1"></a>Weight matrices are needed in analysis, they determine how observations</span>
-<span id="cb33-310"><a href="#cb33-310" aria-hidden="true" tabindex="-1"></a>(or residuals) are weighted in a regression model.</span>
-<span id="cb33-311"><a href="#cb33-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-314"><a href="#cb33-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-315"><a href="#cb33-315" aria-hidden="true" tabindex="-1"></a>(nb_q <span class="sc">|&gt;</span> <span class="fu">nb2listw</span>(<span class="at">style =</span> <span class="st">"B"</span>) <span class="ot">-&gt;</span> lw_q_B)</span>
-<span id="cb33-316"><a href="#cb33-316" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-317"><a href="#cb33-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-318"><a href="#cb33-318" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Spatial correlation: Moran's I</span></span>
-<span id="cb33-319"><a href="#cb33-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-320"><a href="#cb33-320" aria-hidden="true" tabindex="-1"></a>Moran's I is defined as</span>
-<span id="cb33-321"><a href="#cb33-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-322"><a href="#cb33-322" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb33-323"><a href="#cb33-323" aria-hidden="true" tabindex="-1"></a>I = \frac{n \sum_{(2)} w_{ij} z_i z_j}{S_0 \sum_{i=1}^{n} z_i^2}</span>
-<span id="cb33-324"><a href="#cb33-324" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb33-325"><a href="#cb33-325" aria-hidden="true" tabindex="-1"></a>where $x_i, i=1, \ldots, n$ are $n$ observations on the numeric variable of interest, $z_i = x_i - \bar{x}$, $\bar{x} = \sum_{i=1}^{n} x_i / n$, $\sum_{(2)} = \stackrel{\sum_{i=1}^{n} \sum_{j=1}^{n}}{i \neq j}$, $w_{ij}$ are the spatial weights, and $S_0 = \sum_{(2)} w_{ij}$. </span>
-<span id="cb33-326"><a href="#cb33-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-327"><a href="#cb33-327" aria-hidden="true" tabindex="-1"></a>We can compute it as</span>
-<span id="cb33-328"><a href="#cb33-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-331"><a href="#cb33-331" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-332"><a href="#cb33-332" aria-hidden="true" tabindex="-1"></a>pol_pres15<span class="sc">$</span>I_turnout <span class="sc">|&gt;</span></span>
-<span id="cb33-333"><a href="#cb33-333" aria-hidden="true" tabindex="-1"></a>    <span class="fu">moran.test</span>(lw_q_B, <span class="at">randomisation =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-334"><a href="#cb33-334" aria-hidden="true" tabindex="-1"></a>               <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span>
-<span id="cb33-335"><a href="#cb33-335" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pol_pres15[<span class="st">"I_turnout"</span>])</span>
-<span id="cb33-336"><a href="#cb33-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-337"><a href="#cb33-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-338"><a href="#cb33-338" aria-hidden="true" tabindex="-1"></a>A simple linear regression model, assuming independent observations, can be carried out using <span class="in">`lm`</span>:</span>
-<span id="cb33-339"><a href="#cb33-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-342"><a href="#cb33-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-343"><a href="#cb33-343" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pol_pres15<span class="sc">$</span>I_entitled_to_vote)</span>
-<span id="cb33-344"><a href="#cb33-344" aria-hidden="true" tabindex="-1"></a>(lm0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(I_turnout <span class="sc">~</span> I_entitled_to_vote, pol_pres15)) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
-<span id="cb33-345"><a href="#cb33-345" aria-hidden="true" tabindex="-1"></a>pol_pres15<span class="sc">$</span>res <span class="ot">=</span> <span class="fu">residuals</span>(lm0)</span>
-<span id="cb33-346"><a href="#cb33-346" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pol_pres15[<span class="st">"res"</span>])</span>
-<span id="cb33-347"><a href="#cb33-347" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-348"><a href="#cb33-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-349"><a href="#cb33-349" aria-hidden="true" tabindex="-1"></a>A spatial linear regression model (SEM: spatial error model),</span>
-<span id="cb33-350"><a href="#cb33-350" aria-hidden="true" tabindex="-1"></a>assuming independent observations, can be carried out using <span class="in">`lm`</span>:</span>
-<span id="cb33-351"><a href="#cb33-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-354"><a href="#cb33-354" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-355"><a href="#cb33-355" aria-hidden="true" tabindex="-1"></a>form <span class="ot">=</span> I_turnout <span class="sc">~</span> I_entitled_to_vote</span>
-<span id="cb33-356"><a href="#cb33-356" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatialreg)</span>
-<span id="cb33-357"><a href="#cb33-357" aria-hidden="true" tabindex="-1"></a>SEM_pres <span class="ot">&lt;-</span> <span class="fu">errorsarlm</span>(form, <span class="at">data =</span> pol_pres15, <span class="at">Durbin =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-358"><a href="#cb33-358" aria-hidden="true" tabindex="-1"></a>      <span class="at">listw =</span> lw_q_B, <span class="at">zero.policy =</span> <span class="cn">TRUE</span>) </span>
-<span id="cb33-359"><a href="#cb33-359" aria-hidden="true" tabindex="-1"></a>SEM_pres <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
-<span id="cb33-360"><a href="#cb33-360" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-361"><a href="#cb33-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-362"><a href="#cb33-362" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting regression models under spatial correlation</span></span>
-<span id="cb33-363"><a href="#cb33-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-364"><a href="#cb33-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-365"><a href="#cb33-365" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercises Point Patterns</span></span>
-<span id="cb33-366"><a href="#cb33-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-367"><a href="#cb33-367" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>From the point pattern shown in section 1.3, download the data as GeoPackage, and read into R</span>
-<span id="cb33-368"><a href="#cb33-368" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Read the boundary of Germany using <span class="in">`rnaturalearth::ne_countries(scale = "large", country = "Germany")`</span></span>
-<span id="cb33-369"><a href="#cb33-369" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a plot showing both the observation window and the point pattern</span>
-<span id="cb33-370"><a href="#cb33-370" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Do all observations fall inside the observation window?</span>
-<span id="cb33-371"><a href="#cb33-371" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a ppp object from the points and the window</span>
-<span id="cb33-372"><a href="#cb33-372" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a density map of the wind turbines, with the turbines added</span>
-<span id="cb33-373"><a href="#cb33-373" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Test whether the point pattern is homogeneous</span>
-<span id="cb33-374"><a href="#cb33-374" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a plot with the (estimated) density of the wind turbines, with the turbine points added</span>
-<span id="cb33-375"><a href="#cb33-375" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Verify that the mean density multiplied by the area of the window approximates the number of turbines</span>
-<span id="cb33-376"><a href="#cb33-376" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Test for interaction: create diagnostic plots to verify whether the point pattern is clustered, or exhibits repulsion</span>
-<span id="cb33-377"><a href="#cb33-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-378"><a href="#cb33-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises Geostat.</span></span>
-<span id="cb33-379"><a href="#cb33-379" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-380"><a href="#cb33-380" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Compute the variogram cloud of NO2 using <span class="in">`variogram()`</span> and  argument <span class="in">`cloud = TRUE`</span>.  (a) How does the resulting object differ from the "regular" variogram (use the <span class="in">`head`</span> command on both objects); (b) what do the "left" and "right" fields refer to? (c) when we plot the resulting variogram cloud object, does it still indicate spatial correlation?</span>
-<span id="cb33-381"><a href="#cb33-381" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compute the variogram of NO2 as above, and change the arguments <span class="in">`cutoff`</span> and <span class="in">`width`</span> into very large or small values. What do they do?</span>
-<span id="cb33-382"><a href="#cb33-382" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Fit a spherical model to the sample variogram of NO2, using <span class="in">`fit.variogram()`</span> (follow the example below, replace "Exp" with "Sph")</span>
-<span id="cb33-383"><a href="#cb33-383" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Fit a Matern model ("Mat") to the sample variogram using different values for kappa (e.g., 0.3 and 4), and plot the resulting models with the sample variogram.</span>
-<span id="cb33-384"><a href="#cb33-384" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Which model do you like the best? Can the SSErr attribute of the fitted model be used to compare the models? How else can variogram model fits be compared?</span>
-<span id="cb33-385"><a href="#cb33-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-386"><a href="#cb33-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-387"><a href="#cb33-387" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises Lattice data</span></span>
-<span id="cb33-388"><a href="#cb33-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-389"><a href="#cb33-389" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Compare the results of the simple linear regression with the spatial error model</span>
-<span id="cb33-390"><a href="#cb33-390" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compare the maps of residuals of both models</span>
-<span id="cb33-391"><a href="#cb33-391" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Fit a spatial Durbin error model (SDEM), using <span class="in">`Durbin = TRUE`</span> in the same call to <span class="in">`errorsarlm`</span>; compare the output of the Spatial Durbin model with that of the error model.</span>
-<span id="cb33-392"><a href="#cb33-392" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>carry out a likelyhood ratio test to compare the SEM and SDEM models (<span class="in">`lmtest::lrtest()`</span>, see the SDS book Ch 17)</span>
-<span id="cb33-393"><a href="#cb33-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-394"><a href="#cb33-394" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-395"><a href="#cb33-395" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
-<span id="cb33-396"><a href="#cb33-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-397"><a href="#cb33-397" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>E. Pebesma, 2018. Simple Features for R: Standardized Support for Spatial Vector Data. The R Journal 10:1, <span class="co">[</span><span class="ot">439-446</span><span class="co">](https://journal.r-project.org/archive/2018/RJ-2018-009/index.html)</span>.</span>
-<span id="cb33-398"><a href="#cb33-398" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>A. Baddeley, E. Rubak and R Turner, 2016. Spatial Point Patterns: methodology and Applications in R; Chapman and Hall/CRC 810 pages.</span>
-<span id="cb33-399"><a href="#cb33-399" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>J. Illian, A. Penttinen, H. Stoyan and D. Stoyan, 2008. Statistical Analysis and Modelling of Spatial Point Patterns; Wiley, 534 pages.</span>
+<div class="sourceCode" id="cb34" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># inference: spatial correlation, fitting models</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation for point patterns, </span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### Intro to `spatstat`</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>Consider a point pattern that consist of</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>a set of known coordinates</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>an observation window</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>We can ask ourselves: our point **pattern** be a realisation of a *completely spatially random* (CSR) **process**? A CSR process has</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>a spatially constant intensity (*mean*: first order property)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>completely independent locations (*interactions*: second order property)</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>e.g.</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">13431</span>)</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>CSR <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="dv">100</span>)</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(CSR)</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>Or does it have a non-constant intensity, but otherwise independent points?</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1357</span>)</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>ppi <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="cf">function</span>(x,y,...) <span class="dv">500</span> <span class="sc">*</span> x)</span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ppi, <span class="at">main =</span> <span class="st">"inhomogeneous"</span>)</span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>Or does it have constant intensity, but dependent points:</span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">rThomas</span>(<span class="dv">100</span>, .<span class="dv">02</span>, <span class="dv">5</span>)</span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cl, <span class="at">main =</span> <span class="st">"clustered"</span>)</span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">rHardcore</span>(<span class="fl">0.05</span>,<span class="fl">1.5</span>,<span class="fu">square</span>(<span class="dv">50</span>)) </span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hc, <span class="at">main =</span> <span class="st">"inhibition"</span>)</span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a>or a combination:</span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a><span class="co">#ff &lt;- function(x,y) { 4 * exp(2 * abs(x) - 1) }</span></span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1357</span>)</span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true" tabindex="-1"></a>ff <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y) <span class="dv">10</span> <span class="sc">*</span> x</span>
+<span id="cb34-62"><a href="#cb34-62" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">as.im</span>(ff, <span class="fu">owin</span>())</span>
+<span id="cb34-63"><a href="#cb34-63" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rMatClust</span>(<span class="dv">10</span>, <span class="fl">0.05</span>, Z)</span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Y)</span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### Checking homogeneity</span></span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true" tabindex="-1"></a>(<span class="at">q =</span> <span class="fu">quadrat.test</span>(CSR))</span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q)</span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true" tabindex="-1"></a>(<span class="at">q =</span> <span class="fu">quadrat.test</span>(ppi))</span>
+<span id="cb34-75"><a href="#cb34-75" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q)</span>
+<span id="cb34-76"><a href="#cb34-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-77"><a href="#cb34-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-78"><a href="#cb34-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Estimating density</span></span>
+<span id="cb34-79"><a href="#cb34-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-80"><a href="#cb34-80" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>main parameter: bandwidth (<span class="in">`sigma`</span>): determines the amound of smoothing.</span>
+<span id="cb34-81"><a href="#cb34-81" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>if <span class="in">`sigma`</span> is not specified: uses <span class="in">`bw.diggle`</span>, an automatically tuned bandwidth</span>
+<span id="cb34-82"><a href="#cb34-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-83"><a href="#cb34-83" aria-hidden="true" tabindex="-1"></a>Correction for <span class="in">`edge`</span> effect?</span>
+<span id="cb34-84"><a href="#cb34-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-87"><a href="#cb34-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-88"><a href="#cb34-88" aria-hidden="true" tabindex="-1"></a><span class="fu">density</span>(CSR) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-89"><a href="#cb34-89" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(CSR, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>)</span>
+<span id="cb34-90"><a href="#cb34-90" aria-hidden="true" tabindex="-1"></a><span class="fu">density</span>(ppi) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-91"><a href="#cb34-91" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ppi, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>)</span>
+<span id="cb34-92"><a href="#cb34-92" aria-hidden="true" tabindex="-1"></a><span class="fu">density</span>(ppi, <span class="at">sigma =</span> .<span class="dv">05</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-93"><a href="#cb34-93" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ppi, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'green'</span>)</span>
+<span id="cb34-94"><a href="#cb34-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-95"><a href="#cb34-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-96"><a href="#cb34-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assessing interactions: clustering/inhibition</span></span>
+<span id="cb34-97"><a href="#cb34-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-98"><a href="#cb34-98" aria-hidden="true" tabindex="-1"></a>The K-function ("Ripley's K") is the expected number of additional random (CSR) points within a distance r of a typical random point in the observation window.</span>
+<span id="cb34-99"><a href="#cb34-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-100"><a href="#cb34-100" aria-hidden="true" tabindex="-1"></a>The G-function (nearest neighbour distance distribution) is the cumulative distribution function G of the distance from a typical random point of X to the nearest other point of X.</span>
+<span id="cb34-101"><a href="#cb34-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-104"><a href="#cb34-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-105"><a href="#cb34-105" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(CSR, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-106"><a href="#cb34-106" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(cl, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-107"><a href="#cb34-107" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(hc, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-108"><a href="#cb34-108" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(ppi, Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-109"><a href="#cb34-109" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(ppi, Linhom) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-110"><a href="#cb34-110" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(Y , Lest) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-111"><a href="#cb34-111" aria-hidden="true" tabindex="-1"></a><span class="fu">envelope</span>(Y , Linhom) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb34-112"><a href="#cb34-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-113"><a href="#cb34-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-114"><a href="#cb34-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-115"><a href="#cb34-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation for geostatistical data</span></span>
+<span id="cb34-116"><a href="#cb34-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-117"><a href="#cb34-117" aria-hidden="true" tabindex="-1"></a><span class="fu">### `gstat`</span></span>
+<span id="cb34-118"><a href="#cb34-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-119"><a href="#cb34-119" aria-hidden="true" tabindex="-1"></a>R package <span class="in">`gstat`</span> was written in 2002/3, from a stand-alone C program that was released under the GPL in 1997. It implements "basic" geostatistical functions for modelling spatial dependence (variograms), kriging interpolation and conditional simulation. It can be used for multivariable kriging (cokriging), as well as for spatiotemporal variography and kriging. Recent updates included support for <span class="in">`sf`</span> and <span class="in">`stars`</span> objects.</span>
+<span id="cb34-120"><a href="#cb34-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-121"><a href="#cb34-121" aria-hidden="true" tabindex="-1"></a><span class="fu">### What are geostatistical data?</span></span>
+<span id="cb34-122"><a href="#cb34-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-123"><a href="#cb34-123" aria-hidden="true" tabindex="-1"></a>Recall from day 1: locations + measured values</span>
+<span id="cb34-124"><a href="#cb34-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-125"><a href="#cb34-125" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The value of interest is measured at a set of sample locations</span>
+<span id="cb34-126"><a href="#cb34-126" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>At other location, this value exists but is *missing*</span>
+<span id="cb34-127"><a href="#cb34-127" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The interest is in estimating (predicting) this missing value (interpolation)</span>
+<span id="cb34-128"><a href="#cb34-128" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The actual sample locations are not of (primary) interest, the signal is in the measured values</span>
+<span id="cb34-129"><a href="#cb34-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-132"><a href="#cb34-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-133"><a href="#cb34-133" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb34-134"><a href="#cb34-134" aria-hidden="true" tabindex="-1"></a>no2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">"external/no2.csv"</span>,</span>
+<span id="cb34-135"><a href="#cb34-135" aria-hidden="true" tabindex="-1"></a>    <span class="at">package =</span> <span class="st">"gstat"</span>))</span>
+<span id="cb34-136"><a href="#cb34-136" aria-hidden="true" tabindex="-1"></a>crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="st">"EPSG:32632"</span>) <span class="co"># a csv doesn't carry a CRS!</span></span>
+<span id="cb34-137"><a href="#cb34-137" aria-hidden="true" tabindex="-1"></a><span class="fu">st_as_sf</span>(no2, <span class="at">crs =</span> <span class="st">"OGC:CRS84"</span>, <span class="at">coords =</span></span>
+<span id="cb34-138"><a href="#cb34-138" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"station_longitude_deg"</span>, <span class="st">"station_latitude_deg"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-139"><a href="#cb34-139" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> no2.sf</span>
+<span id="cb34-140"><a href="#cb34-140" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb34-141"><a href="#cb34-141" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(st_geometry(no2.sf))</span></span>
+<span id="cb34-142"><a href="#cb34-142" aria-hidden="true" tabindex="-1"></a><span class="st">"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg"</span> <span class="sc">|&gt;</span></span>
+<span id="cb34-143"><a href="#cb34-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_sf</span>() <span class="sc">|&gt;</span></span>
+<span id="cb34-144"><a href="#cb34-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> de</span>
+<span id="cb34-145"><a href="#cb34-145" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">data =</span> de) <span class="sc">+</span></span>
+<span id="cb34-146"><a href="#cb34-146" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">data =</span> no2.sf, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">col =</span> NO2))</span>
+<span id="cb34-147"><a href="#cb34-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-148"><a href="#cb34-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-149"><a href="#cb34-149" aria-hidden="true" tabindex="-1"></a><span class="fu">### Spatial correlation</span></span>
+<span id="cb34-150"><a href="#cb34-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-151"><a href="#cb34-151" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Lagged scatterplots</span></span>
+<span id="cb34-152"><a href="#cb34-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-153"><a href="#cb34-153" aria-hidden="true" tabindex="-1"></a>"by hand", base R:</span>
+<span id="cb34-154"><a href="#cb34-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-157"><a href="#cb34-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-158"><a href="#cb34-158" aria-hidden="true" tabindex="-1"></a>(<span class="at">w =</span> <span class="fu">st_is_within_distance</span>(no2.sf, no2.sf, units<span class="sc">::</span><span class="fu">set_units</span>(<span class="dv">50</span>, km), </span>
+<span id="cb34-159"><a href="#cb34-159" aria-hidden="true" tabindex="-1"></a>                          <span class="at">retain_unique =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb34-160"><a href="#cb34-160" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">as.data.frame</span>(w)</span>
+<span id="cb34-161"><a href="#cb34-161" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> no2.sf<span class="sc">$</span>NO2[d<span class="sc">$</span>row.id]</span>
+<span id="cb34-162"><a href="#cb34-162" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> no2.sf<span class="sc">$</span>NO2[d<span class="sc">$</span>col.id]</span>
+<span id="cb34-163"><a href="#cb34-163" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(x, y)</span>
+<span id="cb34-164"><a href="#cb34-164" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">main =</span> <span class="st">"lagged scatterplot"</span>)</span>
+<span id="cb34-165"><a href="#cb34-165" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb34-166"><a href="#cb34-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-167"><a href="#cb34-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-168"><a href="#cb34-168" aria-hidden="true" tabindex="-1"></a>using gstat:</span>
+<span id="cb34-169"><a href="#cb34-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-172"><a href="#cb34-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-173"><a href="#cb34-173" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
+<span id="cb34-174"><a href="#cb34-174" aria-hidden="true" tabindex="-1"></a><span class="fu">hscat</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">150</span>,<span class="dv">200</span>,<span class="dv">250</span>)<span class="sc">*</span><span class="dv">1000</span>)</span>
+<span id="cb34-175"><a href="#cb34-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-176"><a href="#cb34-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-177"><a href="#cb34-177" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Variogram</span></span>
+<span id="cb34-178"><a href="#cb34-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-179"><a href="#cb34-179" aria-hidden="true" tabindex="-1"></a>When we assume $Z(s)$ has a constant and unknown mean, the spatial dependence can be described by the variogram, defined as $\gamma(h)</span>
+<span id="cb34-180"><a href="#cb34-180" aria-hidden="true" tabindex="-1"></a>= 0.5 E(Z(s)-Z(s+h))^2$. If the random process $Z(s)$ has a finite variance, then the variogram is related to the covariance function $C(h)$ by $\gamma(h) = C(0)-C(h)$.</span>
+<span id="cb34-181"><a href="#cb34-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-182"><a href="#cb34-182" aria-hidden="true" tabindex="-1"></a>The variogram can be estimated from sample data by averaging squared differences: $$\hat{\gamma}(\tilde{h})=\frac{1}{2N_h}\sum_{i=1}^{N_h}(Z(s_i)-Z(s_i+h))^2 \ \</span>
+<span id="cb34-183"><a href="#cb34-183" aria-hidden="true" tabindex="-1"></a>h \in \tilde{h}$$</span>
+<span id="cb34-184"><a href="#cb34-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-185"><a href="#cb34-185" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>divide by $2N_h$:</span>
+<span id="cb34-186"><a href="#cb34-186" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>if finite, $\gamma(\infty)=\sigma^2=C(0)$</span>
+<span id="cb34-187"><a href="#cb34-187" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>*semi* variance</span>
+<span id="cb34-188"><a href="#cb34-188" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>if data are not gridded, group $N_h$ pairs $s_i,s_i+h$ for which $h \in \tilde{h}$, $\tilde{h}=<span class="co">[</span><span class="ot">h_1,h_2</span><span class="co">]</span>$</span>
+<span id="cb34-189"><a href="#cb34-189" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>rule-of-thumb: choose about 10-25 distance intervals $\tilde{h}$, from length 0 to about on third of the area size</span>
+<span id="cb34-190"><a href="#cb34-190" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>plot $\gamma$ against $\tilde{h}$ taken as the average value of all $h \in \tilde{h}$</span>
+<span id="cb34-191"><a href="#cb34-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-192"><a href="#cb34-192" aria-hidden="true" tabindex="-1"></a>We can compute a variogram "by hand", using base R:</span>
+<span id="cb34-193"><a href="#cb34-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-196"><a href="#cb34-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-197"><a href="#cb34-197" aria-hidden="true" tabindex="-1"></a>z <span class="ot">=</span> no2.sf<span class="sc">$</span>NO2</span>
+<span id="cb34-198"><a href="#cb34-198" aria-hidden="true" tabindex="-1"></a>z2 <span class="ot">=</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">outer</span>(z, z, <span class="at">FUN =</span> <span class="st">"-"</span>)<span class="sc">^</span><span class="dv">2</span> <span class="co"># (Z(s)-Z(s+h))^2</span></span>
+<span id="cb34-199"><a href="#cb34-199" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">as.matrix</span>(<span class="fu">st_distance</span>(no2.sf))  <span class="co"># h</span></span>
+<span id="cb34-200"><a href="#cb34-200" aria-hidden="true" tabindex="-1"></a>vcloud <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">dist =</span> <span class="fu">as.vector</span>(d), <span class="at">gamma =</span> <span class="fu">as.vector</span>(z2))</span>
+<span id="cb34-201"><a href="#cb34-201" aria-hidden="true" tabindex="-1"></a>vcloud <span class="ot">=</span> vcloud[vcloud<span class="sc">$</span>dist <span class="sc">!=</span> <span class="dv">0</span>,]</span>
+<span id="cb34-202"><a href="#cb34-202" aria-hidden="true" tabindex="-1"></a>vcloud<span class="sc">$</span>dclass <span class="ot">=</span> <span class="fu">cut</span>(vcloud<span class="sc">$</span>dist, <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>, <span class="dv">350</span>) <span class="sc">*</span> <span class="dv">1000</span>)</span>
+<span id="cb34-203"><a href="#cb34-203" aria-hidden="true" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">aggregate</span>(gamma<span class="sc">~</span>dclass, vcloud, mean)</span>
+<span id="cb34-204"><a href="#cb34-204" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gamma <span class="sc">~</span> dclass, v, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">20</span>))</span>
+<span id="cb34-205"><a href="#cb34-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-206"><a href="#cb34-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-207"><a href="#cb34-207" aria-hidden="true" tabindex="-1"></a>using gstat:</span>
+<span id="cb34-208"><a href="#cb34-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-211"><a href="#cb34-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-212"><a href="#cb34-212" aria-hidden="true" tabindex="-1"></a>vv <span class="ot">=</span> <span class="fu">variogram</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, <span class="at">width =</span> <span class="dv">50000</span>, <span class="at">cutoff =</span> <span class="dv">350000</span>)</span>
+<span id="cb34-213"><a href="#cb34-213" aria-hidden="true" tabindex="-1"></a>vv<span class="sc">$</span>gamma <span class="sc">-</span> v<span class="sc">$</span>gamma</span>
+<span id="cb34-214"><a href="#cb34-214" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(vv)</span>
+<span id="cb34-215"><a href="#cb34-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-216"><a href="#cb34-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-217"><a href="#cb34-217" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Fit a variogram model</span></span>
+<span id="cb34-218"><a href="#cb34-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-221"><a href="#cb34-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-222"><a href="#cb34-222" aria-hidden="true" tabindex="-1"></a><span class="co"># The sample variogram:</span></span>
+<span id="cb34-223"><a href="#cb34-223" aria-hidden="true" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">variogram</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf)</span>
+<span id="cb34-224"><a href="#cb34-224" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v)</span>
+<span id="cb34-225"><a href="#cb34-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-226"><a href="#cb34-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-227"><a href="#cb34-227" aria-hidden="true" tabindex="-1"></a>fit a model, e.g. an exponential model:</span>
+<span id="cb34-228"><a href="#cb34-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-231"><a href="#cb34-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-232"><a href="#cb34-232" aria-hidden="true" tabindex="-1"></a>v.fit <span class="ot">=</span> <span class="fu">fit.variogram</span>(v, <span class="fu">vgm</span>(<span class="dv">1</span>, <span class="st">"Exp"</span>, <span class="dv">50000</span>))</span>
+<span id="cb34-233"><a href="#cb34-233" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v, v.fit)</span>
+<span id="cb34-234"><a href="#cb34-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-235"><a href="#cb34-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-236"><a href="#cb34-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-237"><a href="#cb34-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation in lattice data</span></span>
+<span id="cb34-238"><a href="#cb34-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-239"><a href="#cb34-239" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analysing lattice data: neighbours, weights, models</span></span>
+<span id="cb34-240"><a href="#cb34-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-243"><a href="#cb34-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-244"><a href="#cb34-244" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb34-245"><a href="#cb34-245" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pol_pres15, <span class="at">package =</span> <span class="st">"spDataLarge"</span>)</span>
+<span id="cb34-246"><a href="#cb34-246" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="sc">|&gt;</span></span>
+<span id="cb34-247"><a href="#cb34-247" aria-hidden="true" tabindex="-1"></a>    <span class="fu">subset</span>(<span class="at">select =</span> <span class="fu">c</span>(TERYT, name, types)) <span class="sc">|&gt;</span></span>
+<span id="cb34-248"><a href="#cb34-248" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>()</span>
+<span id="cb34-249"><a href="#cb34-249" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap, <span class="at">warn.conflicts =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-250"><a href="#cb34-250" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(pol_pres15) <span class="sc">+</span> <span class="fu">tm_fill</span>(<span class="st">"types"</span>)</span>
+<span id="cb34-251"><a href="#cb34-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-252"><a href="#cb34-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-253"><a href="#cb34-253" aria-hidden="true" tabindex="-1"></a>We need to make the geometries valid first,</span>
+<span id="cb34-256"><a href="#cb34-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-257"><a href="#cb34-257" aria-hidden="true" tabindex="-1"></a><span class="fu">st_is_valid</span>(pol_pres15) <span class="sc">|&gt;</span> <span class="fu">all</span>()</span>
+<span id="cb34-258"><a href="#cb34-258" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="ot">&lt;-</span> <span class="fu">st_make_valid</span>(pol_pres15)</span>
+<span id="cb34-259"><a href="#cb34-259" aria-hidden="true" tabindex="-1"></a><span class="fu">st_is_valid</span>(pol_pres15) <span class="sc">|&gt;</span> <span class="fu">all</span>()</span>
+<span id="cb34-260"><a href="#cb34-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-261"><a href="#cb34-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-262"><a href="#cb34-262" aria-hidden="true" tabindex="-1"></a>First, we will consider polygons in relationship to their direct neighbours</span>
+<span id="cb34-265"><a href="#cb34-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-266"><a href="#cb34-266" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
+<span id="cb34-267"><a href="#cb34-267" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="sc">|&gt;</span> <span class="fu">poly2nb</span>(<span class="at">queen =</span> <span class="cn">TRUE</span>) <span class="ot">-&gt;</span> nb_q</span>
+<span id="cb34-268"><a href="#cb34-268" aria-hidden="true" tabindex="-1"></a>nb_q</span>
+<span id="cb34-269"><a href="#cb34-269" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-270"><a href="#cb34-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-271"><a href="#cb34-271" aria-hidden="true" tabindex="-1"></a>Is the graph connected?</span>
+<span id="cb34-272"><a href="#cb34-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-275"><a href="#cb34-275" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-276"><a href="#cb34-276" aria-hidden="true" tabindex="-1"></a>(nb_q <span class="sc">|&gt;</span> <span class="fu">n.comp.nb</span>())<span class="sc">$</span>nc</span>
+<span id="cb34-277"><a href="#cb34-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-278"><a href="#cb34-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-281"><a href="#cb34-281" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-282"><a href="#cb34-282" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">4</span>))</span>
+<span id="cb34-283"><a href="#cb34-283" aria-hidden="true" tabindex="-1"></a>pol_pres15 <span class="sc">|&gt;</span></span>
+<span id="cb34-284"><a href="#cb34-284" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb34-285"><a href="#cb34-285" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_centroid</span>(<span class="at">of_largest_polygon =</span> <span class="cn">TRUE</span>) <span class="ot">-&gt;</span> coords</span>
+<span id="cb34-286"><a href="#cb34-286" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(pol_pres15), <span class="at">border =</span> <span class="st">'grey'</span>)</span>
+<span id="cb34-287"><a href="#cb34-287" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nb_q, <span class="at">coords =</span> coords, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">points =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-288"><a href="#cb34-288" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-289"><a href="#cb34-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-290"><a href="#cb34-290" aria-hidden="true" tabindex="-1"></a>Alternative approaches to form neighbourhood matrices:</span>
+<span id="cb34-291"><a href="#cb34-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-292"><a href="#cb34-292" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>based on distance, e.g. setting a distance threshold or selecting a fixed number of nearest neighbours</span>
+<span id="cb34-293"><a href="#cb34-293" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>based on triangulating points, for instance polygon centroids</span>
+<span id="cb34-294"><a href="#cb34-294" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>sphere of influence, a modification of triangulation</span>
+<span id="cb34-295"><a href="#cb34-295" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>include neighbours from neighbours</span>
+<span id="cb34-296"><a href="#cb34-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-297"><a href="#cb34-297" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Weights matrices</span></span>
+<span id="cb34-298"><a href="#cb34-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-299"><a href="#cb34-299" aria-hidden="true" tabindex="-1"></a>Weight matrices are needed in analysis, they determine how observations</span>
+<span id="cb34-300"><a href="#cb34-300" aria-hidden="true" tabindex="-1"></a>(or residuals) are weighted in a regression model.</span>
+<span id="cb34-301"><a href="#cb34-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-304"><a href="#cb34-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-305"><a href="#cb34-305" aria-hidden="true" tabindex="-1"></a>(nb_q <span class="sc">|&gt;</span> <span class="fu">nb2listw</span>(<span class="at">style =</span> <span class="st">"B"</span>) <span class="ot">-&gt;</span> lw_q_B)</span>
+<span id="cb34-306"><a href="#cb34-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-307"><a href="#cb34-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-308"><a href="#cb34-308" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Spatial correlation: Moran's I</span></span>
+<span id="cb34-309"><a href="#cb34-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-310"><a href="#cb34-310" aria-hidden="true" tabindex="-1"></a>Moran's I is defined as</span>
+<span id="cb34-311"><a href="#cb34-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-312"><a href="#cb34-312" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb34-313"><a href="#cb34-313" aria-hidden="true" tabindex="-1"></a>I = \frac{n \sum_{(2)} w_{ij} z_i z_j}{S_0 \sum_{i=1}^{n} z_i^2}</span>
+<span id="cb34-314"><a href="#cb34-314" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb34-315"><a href="#cb34-315" aria-hidden="true" tabindex="-1"></a>where $x_i, i=1, \ldots, n$ are $n$ observations on the numeric variable of interest, $z_i = x_i - \bar{x}$, $\bar{x} = \sum_{i=1}^{n} x_i / n$, $\sum_{(2)} = \stackrel{\sum_{i=1}^{n} \sum_{j=1}^{n}}{i \neq j}$, $w_{ij}$ are the spatial weights, and $S_0 = \sum_{(2)} w_{ij}$. </span>
+<span id="cb34-316"><a href="#cb34-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-317"><a href="#cb34-317" aria-hidden="true" tabindex="-1"></a>We can compute it as</span>
+<span id="cb34-318"><a href="#cb34-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-321"><a href="#cb34-321" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-322"><a href="#cb34-322" aria-hidden="true" tabindex="-1"></a>pol_pres15<span class="sc">$</span>I_turnout <span class="sc">|&gt;</span></span>
+<span id="cb34-323"><a href="#cb34-323" aria-hidden="true" tabindex="-1"></a>    <span class="fu">moran.test</span>(lw_q_B, <span class="at">randomisation =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb34-324"><a href="#cb34-324" aria-hidden="true" tabindex="-1"></a>               <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span>
+<span id="cb34-325"><a href="#cb34-325" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pol_pres15[<span class="st">"I_turnout"</span>])</span>
+<span id="cb34-326"><a href="#cb34-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-327"><a href="#cb34-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-328"><a href="#cb34-328" aria-hidden="true" tabindex="-1"></a>A simple linear regression model, assuming independent observations, can be carried out using <span class="in">`lm`</span>:</span>
+<span id="cb34-329"><a href="#cb34-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-332"><a href="#cb34-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-333"><a href="#cb34-333" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pol_pres15<span class="sc">$</span>I_entitled_to_vote)</span>
+<span id="cb34-334"><a href="#cb34-334" aria-hidden="true" tabindex="-1"></a>(lm0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(I_turnout <span class="sc">~</span> I_entitled_to_vote, pol_pres15)) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
+<span id="cb34-335"><a href="#cb34-335" aria-hidden="true" tabindex="-1"></a>pol_pres15<span class="sc">$</span>res <span class="ot">=</span> <span class="fu">residuals</span>(lm0)</span>
+<span id="cb34-336"><a href="#cb34-336" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pol_pres15[<span class="st">"res"</span>])</span>
+<span id="cb34-337"><a href="#cb34-337" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-338"><a href="#cb34-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-339"><a href="#cb34-339" aria-hidden="true" tabindex="-1"></a>A spatial linear regression model (SEM: spatial error model),</span>
+<span id="cb34-340"><a href="#cb34-340" aria-hidden="true" tabindex="-1"></a>assuming independent observations, can be carried out using <span class="in">`lm`</span>:</span>
+<span id="cb34-341"><a href="#cb34-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-344"><a href="#cb34-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-345"><a href="#cb34-345" aria-hidden="true" tabindex="-1"></a>form <span class="ot">=</span> I_turnout <span class="sc">~</span> I_entitled_to_vote</span>
+<span id="cb34-346"><a href="#cb34-346" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatialreg)</span>
+<span id="cb34-347"><a href="#cb34-347" aria-hidden="true" tabindex="-1"></a>SEM_pres <span class="ot">&lt;-</span> <span class="fu">errorsarlm</span>(form, <span class="at">data =</span> pol_pres15, <span class="at">Durbin =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb34-348"><a href="#cb34-348" aria-hidden="true" tabindex="-1"></a>      <span class="at">listw =</span> lw_q_B, <span class="at">zero.policy =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb34-349"><a href="#cb34-349" aria-hidden="true" tabindex="-1"></a>SEM_pres <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
+<span id="cb34-350"><a href="#cb34-350" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-351"><a href="#cb34-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-352"><a href="#cb34-352" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting regression models under spatial correlation</span></span>
+<span id="cb34-353"><a href="#cb34-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-354"><a href="#cb34-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-355"><a href="#cb34-355" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercises Point Patterns</span></span>
+<span id="cb34-356"><a href="#cb34-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-357"><a href="#cb34-357" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>From the point pattern shown in section 1.3, download the data as GeoPackage, and read into R</span>
+<span id="cb34-358"><a href="#cb34-358" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Read the boundary of Germany using <span class="in">`rnaturalearth::ne_countries(scale = "large", country = "Germany")`</span></span>
+<span id="cb34-359"><a href="#cb34-359" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a plot showing both the observation window and the point pattern</span>
+<span id="cb34-360"><a href="#cb34-360" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Do all observations fall inside the observation window?</span>
+<span id="cb34-361"><a href="#cb34-361" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a ppp object from the points and the window</span>
+<span id="cb34-362"><a href="#cb34-362" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a density map of the wind turbines, with the turbines added</span>
+<span id="cb34-363"><a href="#cb34-363" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Test whether the point pattern is homogeneous</span>
+<span id="cb34-364"><a href="#cb34-364" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a plot with the (estimated) density of the wind turbines, with the turbine points added</span>
+<span id="cb34-365"><a href="#cb34-365" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Verify that the mean density multiplied by the area of the window approximates the number of turbines</span>
+<span id="cb34-366"><a href="#cb34-366" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Test for interaction: create diagnostic plots to verify whether the point pattern is clustered, or exhibits repulsion</span>
+<span id="cb34-367"><a href="#cb34-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-368"><a href="#cb34-368" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises Geostat.</span></span>
+<span id="cb34-369"><a href="#cb34-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-370"><a href="#cb34-370" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Compute the variogram cloud of NO2 using <span class="in">`variogram()`</span> and  argument <span class="in">`cloud = TRUE`</span>.  (a) How does the resulting object differ from the "regular" variogram (use the <span class="in">`head`</span> command on both objects); (b) what do the "left" and "right" fields refer to? (c) when we plot the resulting variogram cloud object, does it still indicate spatial correlation?</span>
+<span id="cb34-371"><a href="#cb34-371" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compute the variogram of NO2 as above, and change the arguments <span class="in">`cutoff`</span> and <span class="in">`width`</span> into very large or small values. What do they do?</span>
+<span id="cb34-372"><a href="#cb34-372" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Fit a spherical model to the sample variogram of NO2, using <span class="in">`fit.variogram()`</span> (follow the example below, replace "Exp" with "Sph")</span>
+<span id="cb34-373"><a href="#cb34-373" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Fit a Matern model ("Mat") to the sample variogram using different values for kappa (e.g., 0.3 and 4), and plot the resulting models with the sample variogram.</span>
+<span id="cb34-374"><a href="#cb34-374" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Which model do you like the best? Can the SSErr attribute of the fitted model be used to compare the models? How else can variogram model fits be compared?</span>
+<span id="cb34-375"><a href="#cb34-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-376"><a href="#cb34-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-377"><a href="#cb34-377" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises Lattice data</span></span>
+<span id="cb34-378"><a href="#cb34-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-379"><a href="#cb34-379" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Compare the results of the simple linear regression with the spatial error model</span>
+<span id="cb34-380"><a href="#cb34-380" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compare the maps of residuals of both models</span>
+<span id="cb34-381"><a href="#cb34-381" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Fit a spatial Durbin error model (SDEM), using <span class="in">`Durbin = TRUE`</span> in the same call to <span class="in">`errorsarlm`</span>; compare the output of the Spatial Durbin model with that of the error model.</span>
+<span id="cb34-382"><a href="#cb34-382" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>carry out a likelyhood ratio test to compare the SEM and SDEM models (<span class="in">`lmtest::lrtest()`</span>, see the SDS book Ch 17)</span>
+<span id="cb34-383"><a href="#cb34-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-384"><a href="#cb34-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-385"><a href="#cb34-385" aria-hidden="true" tabindex="-1"></a><span class="fu">## Further reading</span></span>
+<span id="cb34-386"><a href="#cb34-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-387"><a href="#cb34-387" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>E. Pebesma, 2018. Simple Features for R: Standardized Support for Spatial Vector Data. The R Journal 10:1, <span class="co">[</span><span class="ot">439-446</span><span class="co">](https://journal.r-project.org/archive/2018/RJ-2018-009/index.html)</span>.</span>
+<span id="cb34-388"><a href="#cb34-388" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>A. Baddeley, E. Rubak and R Turner, 2016. Spatial Point Patterns: methodology and Applications in R; Chapman and Hall/CRC 810 pages.</span>
+<span id="cb34-389"><a href="#cb34-389" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>J. Illian, A. Penttinen, H. Stoyan and D. Stoyan, 2008. Statistical Analysis and Modelling of Spatial Point Patterns; Wiley, 534 pages.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

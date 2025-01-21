@@ -2,14 +2,230 @@
 
 ##  point patterns: 
 
-### fitting densities
+### Fitting models 
 
-### simulating point patterns
+Here, we fit a model to an inhomogeneous Poisson point process:
+
+```{r}
+library(spatstat)
+set.seed(1357)
+ppi = rpoispp(function(x,y,...) 500 * x)
+# assuming Inhomogeneous Poisson:
+ppm(ppi, ~x)
+```
+
+and to an Inhomogeneous clustered point process:
+
+```{r}
+set.seed(1357)
+ff <- function(x,y) 10 * x
+Z <- as.im(ff, owin())
+Y <- rMatClust(10, 0.05, Z)
+plot(Y)
+# assuming Inhomogeneous clustered:
+kppm(Y, ~x)
+```
+
+### MaxEnt and species distribution modelling
+
+MaxEnt is a popular software for species distribution modelling in ecology.
+[MaxEnt](https://biodiversityinformatics.amnh.org/open_source/maxent/) fits an [inhomogeneous Poisson process](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049)
+
+Starting from presence (only) observations, it
+
+-   adds background (absence) points, uniformly *in space*
+-   fits logistic regression models to the 0/1 data, using environmental covariates
+-   ignores spatial interactions, spatial distances
+
+R package [maxnet](https://cran.r-project.org/web/packages/maxnet/index.html) does that using glmnet (lasso or elasticnet regularization on)
+
+A maxnet example [using stars](https://github.com/BigelowLab/maxnet/wiki/stars) is available in the development version, which can be installed directly from github by `remotes::install_github("mrmaxent/maxnet")` ; and the same [maxnet example using terra](https://github.com/BigelowLab/maxnet/wiki/terra) (thanks to Ben Tupper).
+
+Relevant papers:
+
+-   a paper detailing the equivalence and differences between point pattern models and MaxEnt is found [here](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12352).
+-   [A statistical explanation of MaxEnt for Ecologists](https://doi.org/10.1111/j.1472-4642.2010.00725.x)
+
+
+### fitting densities, simulating point patterns
+
+(see day 3 materials)
 
 ##  geostatistics
 
 ### kriging interpolation
 
-### conditional simulation,
+```{r}
+library(sf)
+no2 <- read.csv(system.file("external/no2.csv",
+    package = "gstat"))
+crs <- st_crs("EPSG:32632") # a csv doesn't carry a CRS!
+st_as_sf(no2, crs = "OGC:CRS84", coords =
+    c("station_longitude_deg", "station_latitude_deg")) |>
+    st_transform(crs) -> no2.sf
+```
 
+Fit a variogram model:
+
+```{r}
+# The sample variogram:
+library(gstat)
+v = variogram(NO2~1, no2.sf)
+plot(v)
+```
+
+fit a model, e.g. an exponential model:
+
+```{r}
+v.fit = fit.variogram(v, vgm(1, "Exp", 50000))
+plot(v, v.fit)
+```
+
+set up a prediction template:
+```{r}
+"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg" |>
+  read_sf() |>
+  st_transform(crs) -> de
+library(stars)
+g2 = st_as_stars(st_bbox(de))
+g3 = st_crop(g2, de)
+```
+
+#### IDW
+
+
+```{r}
+i = idw(NO2~1, no2.sf, g3) 
+```
+
+#### BLUP/Kriging
+
+Given this model, we can interpolate using the *best unbiased linear predictor* (BLUP), also called kriging predictor. Under the model $Z(s)=m+e(s)$ it estimates $m$ using generalized least squares, and predicts $e(s)$ using a weighted mean, where weights are chosen such that $Var(Z(s_0)-\hat{Z}(s_0))$ is minimized.
+
+```{r}
+k = krige(NO2~1, no2.sf, g3, v.fit)
+k$idw = i$var1.pred
+k$kriging = k$var1.pred
+hook = function() {
+  plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')
+  plot(st_cast(st_geometry(de), "MULTILINESTRING"), add = TRUE, col = 'red')
+}
+plot(merge(k[c("kriging", "idw")]), hook = hook, breaks = "equal")
+```
+
+::: callout-important
+## Density or interpolation?
+
+Both density maps shown in the Point Pattern section and interpolated maps shown in this section look very similar:
+
+-   raster maps with continuous values
+-   smooth spatial patterns
+
+The differences could not be larger!
+
+-   point density estimates estimate the number of points per unit area; the values are (normalized) *counts*
+-   interpolated maps estimate an unmeasured continuous variable; the values are weighted averages of an *attribute*
+:::
+
+To illustrate the difference between density and interpolated values:
+
+```{r echo=FALSE}
+#| code-fold: true
+#| out.width: '100%'
+library(spatstat)
+p = as.ppp(st_geometry(no2.sf), W = as.owin(st_union(st_geometry(de))))
+density(p) |> st_as_stars() |> plot(main = "station density (# m^-2)", reset = FALSE)
+plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')
+```
+
+```{r echo=FALSE}
+#| code-fold: true
+#| out.width: '100%'
+plot(i, main = "interpolation: NO2 (ppm)", reset = FALSE)
+plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')
+```
+
+## Kriging with a non-constant mean
+
+Under the model $Z(s) = X(s)\beta + e(s)$, $\beta$ is estimated using generalized least squares, and the variogram of regression residuals is needed; see Ch 12.
+
+## Conditional simulation
+
+### Simulating spatially correlated data
+
+Using a coarse grid, with base R:
+
+```{r}
+set.seed(13579)
+g2c = st_as_stars(st_bbox(de), dx = 15000)
+g3c = st_crop(g2c, de)
+p = st_as_sf(g3c, as_points = TRUE)
+d = st_distance(p)
+Sigma = variogramLine(v.fit, covariance = TRUE, dist_vector = d)
+n = 100
+ch = chol(Sigma)
+sim = matrix(rnorm(n * nrow(ch)), nrow = n) %*% ch + mean(no2.sf$NO2)
+for (i in seq_len(n)) {
+	m = g3c[[1]]
+	m[!is.na(m)] = sim[i,]
+	g3c[[ paste0("sim", i) ]] = m
+}
+plot(merge(g3c[2:11]), breaks = "equal")
+```
+
+As a check, we could compute the variogram of some of the realisations:
+
+```{r}
+g3c["sim4"] |> 
+  st_as_sf() |> 
+  variogram(sim4~1, data = _) |> 
+  plot(model = v.fit)
+g3c["sim5"] |> 
+  st_as_sf() |> 
+  variogram(sim5~1, data = _) |> 
+  plot(model = v.fit, ylim = c(0,17.5))
+g3c["sim6"] |> 
+  st_as_sf() |> 
+  variogram(sim6~1, data = _) |> 
+  plot(model = v.fit, ylim = c(0,17.5))
+```
+
+The mean of these simulations is constant, not related to measured values:
+
+```{r}
+st_apply(merge(g3c[-1]), c("x", "y"), mean) |> plot()
+mean(no2.sf$NO2)
+```
+
+Conditioning simulations on measured values can be done with `gstat`, using *conditional simulation*
+
+```{r}
+cs = krige(NO2~1, no2.sf, g3, v.fit, nsim = 50, nmax = 30)
+plot(cs[,,,1:10])
+```
+
+We see that these simulations are much more alike; also their mean and variance resemble that of the kriging mean and variance:
+
+```{r}
+csm = st_apply(cs, c("x", "y"), mean)
+csm$kriging = krige(NO2~1, no2.sf, g3, v.fit)[1]
+plot(merge(csm), breaks = "equal")
+csv = st_apply(cs, c("x", "y"), var)
+csv$kr_var = krige(NO2~1, no2.sf, g3, v.fit)[2]
+plot(merge(csv), breaks = "equal")
+```
+
+## Exercises
+
+1. What causes the differences between the mean and the variance of
+the simulations (left) and the mean and variance obtained by kriging
+(right)?
+2. When comparing (above) the sample variogram of simulated fields
+with the variogram model used to simulate them, where do you
+see differences? Can you explain why these are not identical, or
+hypothesize under which circumstances these would become (more)
+identical?
+3. Under which practical data analysis problem would conditional
+simulations be more useful than the kriging prediction + kriging
+variance maps?
 

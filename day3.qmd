@@ -26,6 +26,7 @@ plot(CSR)
 Or does it have a non-constant intensity, but otherwise independent points?
 
 ```{r}
+set.seed(1357)
 ppi = rpoispp(function(x,y,...) 500 * x)
 plot(ppi, main = "inhomogeneous")
 ```
@@ -46,6 +47,7 @@ or a combination:
 
 ```{r}
 #ff <- function(x,y) { 4 * exp(2 * abs(x) - 1) }
+set.seed(1357)
 ff <- function(x,y) 10 * x
 Z <- as.im(ff, owin())
 Y <- rMatClust(10, 0.05, Z)
@@ -92,34 +94,6 @@ envelope(ppi, Linhom) |> plot()
 envelope(Y , Lest) |> plot()
 envelope(Y , Linhom) |> plot()
 ```
-
-### Fitting models to clustered data
-
-```{r}
-# assuming Inhomogeneous Poisson:
-ppm(ppi, ~x)
-# assuming Inhomogeneous clustered:
-kppm(Y, ~x)
-```
-
-### MaxEnt and species distribution modelling
-
-It seems that [MaxEnt](https://biodiversityinformatics.amnh.org/open_source/maxent/) fits an [inhomogeneous Poisson process](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049)
-
-Starting from presence (only) observations, it
-
--   adds background (absence) points, uniformly *in space*
--   fits logistic regression models to the 0/1 data, using environmental covariates
--   ignores spatial interactions, spatial distances
-
-R package [maxnet](https://cran.r-project.org/web/packages/maxnet/index.html) does that using glmnet (lasso or elasticnet regularization on)
-
-A maxnet example [using stars](https://github.com/BigelowLab/maxnet/wiki/stars) is available in the development version, which can be installed directly from github by `remotes::install_github("mrmaxent/maxnet")` ; and the same [maxnet example using terra](https://github.com/BigelowLab/maxnet/wiki/terra) (thanks to Ben Tupper).
-
-Relevant papers:
-
--   a paper detailing the equivalence and differences between point pattern models and MaxEnt is found [here](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12352).
--   [A statistical explanation of MaxEnt for Ecologists](https://doi.org/10.1111/j.1472-4642.2010.00725.x)
 
 
 ## Spatial correlation for geostatistical data
@@ -214,6 +188,20 @@ vv$gamma - v$gamma
 plot(vv)
 ```
 
+#### Fit a variogram model
+
+```{r}
+# The sample variogram:
+v = variogram(NO2~1, no2.sf)
+plot(v)
+```
+
+fit a model, e.g. an exponential model:
+
+```{r}
+v.fit = fit.variogram(v, vgm(1, "Exp", 50000))
+plot(v, v.fit)
+```
 
 
 ## Spatial correlation in lattice data
