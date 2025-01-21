@@ -1,9 +1,10 @@
 # inference: spatial correlation, fitting models
 
-##  spatial correlation for point patterns, 
+## Spatial correlation for point patterns, 
 
-## spatial correlation for geostatistical data
 
-## spatial correlation in lattice data
+## Spatial correlation for geostatistical data
 
-## fitting regression models under spatial correlation
+## Spatial correlation in lattice data
+
+## Fitting regression models under spatial correlation

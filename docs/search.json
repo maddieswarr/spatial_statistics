@@ -214,7 +214,7 @@
     "href": "day2.html#exercises",
     "title": "\n2  Operations, raster-vector, vector-raster\n",
     "section": "\n2.8 Exercises",
-    "text": "2.8 Exercises\n\nIn the first st_buffer example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?\nWhy are the circular buffers computed in the section on spherical geometry of unequal size? Why does it become \\(100 \\pi\\) when removing the coordinate reference system, as in\n\n\nb1 |&gt; st_set_crs(NA) |&gt; st_area()\n# [1] 314\nb2 |&gt; st_set_crs(NA) |&gt; st_area()\n# [1] 314\n\n\nFrom looking at the plate carree map of the world, from which geometries can you already tell that they will be not valid when considered on the sphere?\nCheck whether this is the case using st_is_valid(). Which geometries are not valid? Can you make them valid?\nTry the area-weighted example above using extensive = TRUE. What does this mean? Which quantity is preserved now?\n\nContinue with the exercises of SDSWR Ch 5.",
+    "text": "2.8 Exercises\n\nIn the first st_buffer example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?\nWhy are the circular buffers computed in the section on spherical geometry of unequal size? Why does it become \\(100 \\pi\\) when removing the coordinate reference system, as in\n\n\nb1 |&gt; st_set_crs(NA) |&gt; st_area()\n# [1] 314\nb2 |&gt; st_set_crs(NA) |&gt; st_area()\n# [1] 314\n\n\nFrom looking at the plate carree map of the world, from which geometries can you already tell that they will be not valid when considered on the sphere?\nCheck whether this is the case using st_is_valid(). Which geometries are not valid? Can you make them valid?\nTry the area-weighted example above using extensive = TRUE. What does this mean? Which quantity is preserved now?\nTry sampling the territory of Canada (from ne_countries()) using random sampling and a sample size of 500. Plot the points along with the country outline. Are the points randomly distributed on the plot?\nIn the nc dataset, for the variables “Number of Births” and “Fraction of non-white births”, are these variables spatially extensive of intensive?\nIn the station density map shown above, what is the unit of measurement of the values shown?\nFor the NO2 concentration map shown above, compute the (multi-)polygon for which interpolated values are above 15.\n\nContinue with the exercises of SDSWR Ch 5.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Operations, raster-vector, vector-raster</span>"
     ]
@@ -224,7 +224,7 @@
     "href": "day3.html",
     "title": "3  inference: spatial correlation, fitting models",
     "section": "",
-    "text": "3.1 spatial correlation for point patterns,",
+    "text": "3.1 Spatial correlation for point patterns,",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>inference: spatial correlation, fitting models</span>"
     ]
@@ -233,8 +233,8 @@
     "objectID": "day3.html#spatial-correlation-for-geostatistical-data",
     "href": "day3.html#spatial-correlation-for-geostatistical-data",
     "title": "3  inference: spatial correlation, fitting models",
-    "section": "3.2 spatial correlation for geostatistical data",
-    "text": "3.2 spatial correlation for geostatistical data",
+    "section": "3.2 Spatial correlation for geostatistical data",
+    "text": "3.2 Spatial correlation for geostatistical data",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>inference: spatial correlation, fitting models</span>"
     ]
@@ -243,8 +243,8 @@
     "objectID": "day3.html#spatial-correlation-in-lattice-data",
     "href": "day3.html#spatial-correlation-in-lattice-data",
     "title": "3  inference: spatial correlation, fitting models",
-    "section": "3.3 spatial correlation in lattice data",
-    "text": "3.3 spatial correlation in lattice data",
+    "section": "3.3 Spatial correlation in lattice data",
+    "text": "3.3 Spatial correlation in lattice data",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>inference: spatial correlation, fitting models</span>"
     ]
@@ -253,8 +253,8 @@
     "objectID": "day3.html#fitting-regression-models-under-spatial-correlation",
     "href": "day3.html#fitting-regression-models-under-spatial-correlation",
     "title": "3  inference: spatial correlation, fitting models",
-    "section": "3.4 fitting regression models under spatial correlation",
-    "text": "3.4 fitting regression models under spatial correlation",
+    "section": "3.4 Fitting regression models under spatial correlation",
+    "text": "3.4 Fitting regression models under spatial correlation",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>inference: spatial correlation, fitting models</span>"
     ]

@@ -299,13 +299,17 @@ resolution high frequent data (e.g. from sattelites).
 ## Exercises
 
 1. In the first `st_buffer` example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?
-1. Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in
+2. Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in
 ```{r}
 b1 |> st_set_crs(NA) |> st_area()
 b2 |> st_set_crs(NA) |> st_area()
 ```
-1. From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? 
-1. Check whether this is the case using `st_is_valid()`. Which geometries are not valid? Can you make them valid?
-1. Try the area-weighted example above using `extensive = TRUE`. What does this mean? Which quantity is preserved now?
+3. From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? 
+4. Check whether this is the case using `st_is_valid()`. Which geometries are not valid? Can you make them valid?
+5. Try the area-weighted example above using `extensive = TRUE`. What does this mean? Which quantity is preserved now?
+6. Try sampling the territory of Canada (from `ne_countries()`) using random sampling and a sample size of 500. Plot the points along with the country outline. Are the points randomly distributed on the plot?
+7. In the `nc` dataset, for the variables "Number of Births" and "Fraction of non-white births", are these variables spatially extensive of intensive?
+8. In the `station density` map shown above, what is the unit of measurement of the values shown?
+9. For the NO2 concentration map shown above, compute the (multi-)polygon for which interpolated values are above 15.
 
 Continue with the exercises of [SDSWR Ch 5](https://r-spatial.org/book/05-Attributes.html#exercises).

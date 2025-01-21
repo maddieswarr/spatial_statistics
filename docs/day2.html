@@ -735,10 +735,14 @@ Figure&nbsp;2.1
 <span><span class="va">b2</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_set_crs</a></span><span class="op">(</span><span class="cn">NA</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html">st_area</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># [1] 314</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<ol type="1">
+<ol start="3" type="1">
 <li>From looking at the plate carree map of the world, from which geometries can you already tell that they will be not <em>valid</em> when considered on the sphere?</li>
 <li>Check whether this is the case using <code><a href="https://r-spatial.github.io/sf/reference/valid.html">st_is_valid()</a></code>. Which geometries are not valid? Can you make them valid?</li>
 <li>Try the area-weighted example above using <code>extensive = TRUE</code>. What does this mean? Which quantity is preserved now?</li>
+<li>Try sampling the territory of Canada (from <code><a href="https://docs.ropensci.org/rnaturalearth/reference/ne_countries.html">ne_countries()</a></code>) using random sampling and a sample size of 500. Plot the points along with the country outline. Are the points randomly distributed on the plot?</li>
+<li>In the <code>nc</code> dataset, for the variables “Number of Births” and “Fraction of non-white births”, are these variables spatially extensive of intensive?</li>
+<li>In the <code>station density</code> map shown above, what is the unit of measurement of the values shown?</li>
+<li>For the NO2 concentration map shown above, compute the (multi-)polygon for which interpolated values are above 15.</li>
 </ol>
 <p>Continue with the exercises of <a href="https://r-spatial.org/book/05-Attributes.html#exercises">SDSWR Ch 5</a>.</p>
 
@@ -1527,16 +1531,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-333"><a href="#cb24-333" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
 <span id="cb24-334"><a href="#cb24-334" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-335"><a href="#cb24-335" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>In the first <span class="in">`st_buffer`</span> example above, how many quad segments should be used to get the difference between the buffer area and pi smaller than 0.0001?</span>
-<span id="cb24-336"><a href="#cb24-336" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in</span>
+<span id="cb24-336"><a href="#cb24-336" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Why are the circular buffers computed in the section on _spherical geometry_ of unequal size? Why does it become $100 \pi$ when removing the coordinate reference system, as in</span>
 <span id="cb24-339"><a href="#cb24-339" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb24-340"><a href="#cb24-340" aria-hidden="true" tabindex="-1"></a>b1 <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="cn">NA</span>) <span class="sc">|&gt;</span> <span class="fu">st_area</span>()</span>
 <span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a>b2 <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="cn">NA</span>) <span class="sc">|&gt;</span> <span class="fu">st_area</span>()</span>
 <span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? </span>
-<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Check whether this is the case using <span class="in">`st_is_valid()`</span>. Which geometries are not valid? Can you make them valid?</span>
-<span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Try the area-weighted example above using <span class="in">`extensive = TRUE`</span>. What does this mean? Which quantity is preserved now?</span>
-<span id="cb24-346"><a href="#cb24-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-347"><a href="#cb24-347" aria-hidden="true" tabindex="-1"></a>Continue with the exercises of <span class="co">[</span><span class="ot">SDSWR Ch 5</span><span class="co">](https://r-spatial.org/book/05-Attributes.html#exercises)</span>.</span>
+<span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>From looking at the plate carree map of the world, from which geometries can you already tell that they will be not _valid_ when considered on the sphere? </span>
+<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Check whether this is the case using <span class="in">`st_is_valid()`</span>. Which geometries are not valid? Can you make them valid?</span>
+<span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Try the area-weighted example above using <span class="in">`extensive = TRUE`</span>. What does this mean? Which quantity is preserved now?</span>
+<span id="cb24-346"><a href="#cb24-346" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Try sampling the territory of Canada (from <span class="in">`ne_countries()`</span>) using random sampling and a sample size of 500. Plot the points along with the country outline. Are the points randomly distributed on the plot?</span>
+<span id="cb24-347"><a href="#cb24-347" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>In the <span class="in">`nc`</span> dataset, for the variables "Number of Births" and "Fraction of non-white births", are these variables spatially extensive of intensive?</span>
+<span id="cb24-348"><a href="#cb24-348" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>In the <span class="in">`station density`</span> map shown above, what is the unit of measurement of the values shown?</span>
+<span id="cb24-349"><a href="#cb24-349" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>For the NO2 concentration map shown above, compute the (multi-)polygon for which interpolated values are above 15.</span>
+<span id="cb24-350"><a href="#cb24-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-351"><a href="#cb24-351" aria-hidden="true" tabindex="-1"></a>Continue with the exercises of <span class="co">[</span><span class="ot">SDSWR Ch 5</span><span class="co">](https://r-spatial.org/book/05-Attributes.html#exercises)</span>.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

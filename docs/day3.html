@@ -183,10 +183,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#spatial-correlation-for-point-patterns" id="toc-spatial-correlation-for-point-patterns" class="nav-link active" data-scroll-target="#spatial-correlation-for-point-patterns"><span class="header-section-number">3.1</span> spatial correlation for point patterns,</a></li>
-  <li><a href="#spatial-correlation-for-geostatistical-data" id="toc-spatial-correlation-for-geostatistical-data" class="nav-link" data-scroll-target="#spatial-correlation-for-geostatistical-data"><span class="header-section-number">3.2</span> spatial correlation for geostatistical data</a></li>
-  <li><a href="#spatial-correlation-in-lattice-data" id="toc-spatial-correlation-in-lattice-data" class="nav-link" data-scroll-target="#spatial-correlation-in-lattice-data"><span class="header-section-number">3.3</span> spatial correlation in lattice data</a></li>
-  <li><a href="#fitting-regression-models-under-spatial-correlation" id="toc-fitting-regression-models-under-spatial-correlation" class="nav-link" data-scroll-target="#fitting-regression-models-under-spatial-correlation"><span class="header-section-number">3.4</span> fitting regression models under spatial correlation</a></li>
+  <li><a href="#spatial-correlation-for-point-patterns" id="toc-spatial-correlation-for-point-patterns" class="nav-link active" data-scroll-target="#spatial-correlation-for-point-patterns"><span class="header-section-number">3.1</span> Spatial correlation for point patterns,</a></li>
+  <li><a href="#spatial-correlation-for-geostatistical-data" id="toc-spatial-correlation-for-geostatistical-data" class="nav-link" data-scroll-target="#spatial-correlation-for-geostatistical-data"><span class="header-section-number">3.2</span> Spatial correlation for geostatistical data</a></li>
+  <li><a href="#spatial-correlation-in-lattice-data" id="toc-spatial-correlation-in-lattice-data" class="nav-link" data-scroll-target="#spatial-correlation-in-lattice-data"><span class="header-section-number">3.3</span> Spatial correlation in lattice data</a></li>
+  <li><a href="#fitting-regression-models-under-spatial-correlation" id="toc-fitting-regression-models-under-spatial-correlation" class="nav-link" data-scroll-target="#fitting-regression-models-under-spatial-correlation"><span class="header-section-number">3.4</span> Fitting regression models under spatial correlation</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/edzer/madrid/edit/main/day3.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
@@ -213,16 +213,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <section id="spatial-correlation-for-point-patterns" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="spatial-correlation-for-point-patterns"><span class="header-section-number">3.1</span> spatial correlation for point patterns,</h2>
+<h2 data-number="3.1" class="anchored" data-anchor-id="spatial-correlation-for-point-patterns"><span class="header-section-number">3.1</span> Spatial correlation for point patterns,</h2>
 </section>
 <section id="spatial-correlation-for-geostatistical-data" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="spatial-correlation-for-geostatistical-data"><span class="header-section-number">3.2</span> spatial correlation for geostatistical data</h2>
+<h2 data-number="3.2" class="anchored" data-anchor-id="spatial-correlation-for-geostatistical-data"><span class="header-section-number">3.2</span> Spatial correlation for geostatistical data</h2>
 </section>
 <section id="spatial-correlation-in-lattice-data" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="spatial-correlation-in-lattice-data"><span class="header-section-number">3.3</span> spatial correlation in lattice data</h2>
+<h2 data-number="3.3" class="anchored" data-anchor-id="spatial-correlation-in-lattice-data"><span class="header-section-number">3.3</span> Spatial correlation in lattice data</h2>
 </section>
 <section id="fitting-regression-models-under-spatial-correlation" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="fitting-regression-models-under-spatial-correlation"><span class="header-section-number">3.4</span> fitting regression models under spatial correlation</h2>
+<h2 data-number="3.4" class="anchored" data-anchor-id="fitting-regression-models-under-spatial-correlation"><span class="header-section-number">3.4</span> Fitting regression models under spatial correlation</h2>
 
 
 <!-- -->
@@ -715,13 +715,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># inference: spatial correlation, fitting models</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">##  spatial correlation for point patterns, </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation for point patterns, </span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## spatial correlation for geostatistical data</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## spatial correlation in lattice data</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## fitting regression models under spatial correlation</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation for geostatistical data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spatial correlation in lattice data</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting regression models under spatial correlation</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
