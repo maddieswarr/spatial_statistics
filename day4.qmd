@@ -30,7 +30,13 @@ Y <- rThomas(100, 0.05, Z)
 plot(Y)
 # assuming Inhomogeneous clustered, Thomas process:
 kppm(CRS, ~x) |> summary()
+```
+
+```{r}
 kppm(ppi, ~x) |> summary()
+```
+
+```{r}
 kppm(Y, ~x) |> summary()
 ```
 
