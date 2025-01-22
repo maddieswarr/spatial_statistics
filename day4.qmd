@@ -113,47 +113,16 @@ hook = function() {
 plot(merge(k[c("kriging", "idw")]), hook = hook, breaks = "equal")
 ```
 
-::: callout-important
-## Density or interpolation?
-
-Both density maps shown in the Point Pattern section and interpolated maps shown in this section look very similar:
-
--   raster maps with continuous values
--   smooth spatial patterns
-
-The differences could not be larger!
-
--   point density estimates estimate the number of points per unit area; the values are (normalized) *counts*
--   interpolated maps estimate an unmeasured continuous variable; the values are weighted averages of an *attribute*
-:::
-
-To illustrate the difference between density and interpolated values:
-
-```{r echo=FALSE}
-#| code-fold: true
-#| out.width: '100%'
-library(spatstat)
-p = as.ppp(st_geometry(no2.sf), W = as.owin(st_union(st_geometry(de))))
-density(p) |> st_as_stars() |> plot(main = "station density (# m^-2)", reset = FALSE)
-plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')
-```
-
-```{r echo=FALSE}
-#| code-fold: true
-#| out.width: '100%'
-plot(i, main = "interpolation: NO2 (ppm)", reset = FALSE)
-plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')
-```
 
 ## Kriging with a non-constant mean
 
-Under the model $Z(s) = X(s)\beta + e(s)$, $\beta$ is estimated using generalized least squares, and the variogram of regression residuals is needed; see Ch 12.
+Under the model $Z(s) = X(s)\beta + e(s)$, $\beta$ is estimated using generalized least squares, and the variogram of regression residuals is needed; see [SDS Ch 12.7](https://r-spatial.org/book/12-Interpolation.html#trend-models).
 
 ## Conditional simulation
 
 ### Simulating spatially correlated data
 
-Using a coarse grid, with base R:
+Using a coarse grid, with base R, using the Choleski decomposition algorithm:
 
 ```{r}
 set.seed(13579)

@@ -1,0 +1,233 @@
+## Exercises Point Patterns
+
+#### From the point pattern of wind turbines shown in section 1.4, download the data as GeoPackage, and read them into R
+
+Download from the "here" link, just above the figure in 1.4; copy the dataset to your working directory, figure out the name
+(which may vary), then
+```{r}
+library(sf)
+(w = read_sf("Windkraftanlagen_DE_5521464311407255742.gpkg"))
+```
+
+#### Read the boundary of Germany using ...
+
+For this, you may have to install first a high resolution version of the Natural Earth data;
+```{r}
+de = rnaturalearth::ne_countries(scale = "large", country = "Germany")
+```
+
+
+#### Create a plot showing both the observation window and the point pattern
+
+Both datasets have a different CRS, so we need to bring them to a common CRS;
+we take that of the wind turbines, as it is projected (although Pseudo-Mercator
+is potentially not such a good choice; UTM might be better).
+```{r}
+de.pm = st_transform(de, st_crs(w))
+plot(st_geometry(de.pm))
+plot(w, add = TRUE)
+```
+
+Or using `spatstat`:
+
+```{r}
+library(spatstat)
+pp = as.ppp(st_geometry(w), as.owin(de.pm))
+plot(pp)
+```
+
+#### Do all observations fall inside the observation window?
+
+As `spatstat` reported above, 52 points are outside the window.
+
+#### Create a ppp object from the points and the window
+
+```{r}
+see above
+```
+
+#### Test whether the point pattern is homogeneous
+
+```{r}
+(pp.test = quadrat.test(pp))
+plot(pp.test)
+```
+
+
+#### Create a plot with the (estimated) density of the wind turbines, with the turbine points added
+
+```{r}
+plot(pp.d <- density(pp))
+plot(pp, add = TRUE, col = 'green', cex = .3)
+```
+
+
+#### Verify that the mean density multiplied by the area of the window approximates the number of turbines
+
+```{r}
+mean(pp.d) * st_area(de.pm) |> units::drop_units()
+pp
+```
+
+#### Test for interaction: create diagnostic plots to verify whether the point pattern is clustered, or exhibits repulsion
+
+```{r}
+Lest(pp) |> plot()
+Linhom(pp) |> plot()
+```
+
+This however takes a very long time (untried):
+```{r eval=FALSE}
+envelope(pp, Lest) |> plot()
+envelope(ppi, Linhom) |> plot()
+```
+
+## Exercises Geostatistics.
+
+#### Compute the variogram cloud of NO2 using `variogram()` and  argument `cloud = TRUE`.  (a) How does the resulting object differ from the "regular" variogram (use the `head` command on both objects); (b) what do the "left" and "right" fields refer to? (c) when we plot the resulting variogram cloud object, does it still indicate spatial correlation?
+
+```{r}
+library(sf)
+no2 <- read.csv(system.file("external/no2.csv",
+    package = "gstat"))
+crs <- st_crs("EPSG:32632") # a csv doesn't carry a CRS!
+st_as_sf(no2, crs = "OGC:CRS84", coords =
+    c("station_longitude_deg", "station_latitude_deg")) |>
+    st_transform(crs) -> no2.sf
+library(gstat)
+vc = variogram(NO2~1, no2.sf, cloud = TRUE)
+head(vc)
+```
+
+"left" and "right" point to the row numbers of the original data points contriting to the gamma value
+
+```{r}
+plot(vc)
+```
+
+It's hard to see; individual points are `\chi(1)` distributed, so very skew; with some efforts one
+can see that mean values for lower lag values are smaller than those for larger lags.
+
+#### Compute the variogram of NO2 as above, and change the arguments `cutoff` and `width` into very large or small values. What do they do?
+
+```{r}
+(vc = variogram(NO2~1, no2.sf, cutoff = 40000, width = 1000))
+```
+
+`cutoff` is the maximum distance, `width` the interval width (lag size).
+
+
+#### Fit a spherical model to the sample variogram of NO2, using `fit.variogram()` (follow the example below, replace "Exp" with "Sph")
+
+```{r}
+v = variogram(NO2~1, no2.sf)
+v.fit.e = fit.variogram(v, vgm(1, "Exp", 50000))
+v.fit.s = fit.variogram(v, vgm(1, "Sph", 50000))
+plot(v, v.fit.s)
+v.fit.e
+v.fit.s
+```
+As you can see, the spherical model levels at the range value, it doesn't reach a plateau asymptotically as exponential does.
+
+#### Fit a Matern model ("Mat") to the sample variogram using different values for kappa (e.g., 0.3 and 4), and plot the resulting models with the sample variogram.
+
+```{r}
+v.fit.m1 = fit.variogram(v, vgm(1, "Mat", 50000, kappa = .3))
+plot(v, v.fit.m1)
+v.fit.m2 = fit.variogram(v, vgm(1, "Mat", 50000, kappa = 4))
+plot(v, v.fit.m2)
+v.fit.m1
+v.fit.m2
+```
+
+#### Which model do you like the best? Can the SSErr attribute of the fitted model be used to compare the models? How else can variogram model fits be compared?
+
+We can plot all models in a single plot, e.g. by
+```{r}
+p.exp <- plot(v, v.fit.e)
+p.sph <- plot(v, v.fit.s, col="red")
+p.mat1 <- plot(v, v.fit.m1, col="blue")
+p.mat2 <- plot(v, v.fit.m2, col="green")
+p.exp +
+  latticeExtra::as.layer(p.sph) +
+  latticeExtra::as.layer(p.mat1) +
+  latticeExtra::as.layer(p.mat2)
+```
+
+Comparing SSErr:
+
+```{r}
+attr(v.fit.e, "SSErr")
+attr(v.fit.s, "SSErr")
+attr(v.fit.m1, "SSErr")
+attr(v.fit.m2, "SSErr")
+```
+indicating that from these four, m2 is "best"
+
+`SSErr` is a _weighted_ sum of squares; as long as the weights are not derived from the fitted model, then they can be compared. By default (`fit.method=7`) this is the not the case, so they can be compared.
+
+Another way of comparing the "goodness" of variogram models is to use them in a cross validation setting: then they are compared for their purpose, which is spatial prediction.
+
+```{r}
+cv.e = krige.cv(NO2~1, no2.sf, v.fit.e)
+cv.s = krige.cv(NO2~1, no2.sf, v.fit.s)
+cv.m1 = krige.cv(NO2~1, no2.sf, v.fit.m1)
+cv.m2 = krige.cv(NO2~1, no2.sf, v.fit.m2)
+mean(cv.e$zscore^2) |> sqrt() # RMSPE of cv
+mean(cv.s$zscore^2) |> sqrt() # RMSPE of cv
+mean(cv.m1$zscore^2) |> sqrt() # RMSPE of cv
+mean(cv.m2$zscore^2) |> sqrt() # RMSPE of cv
+```
+indicating that from these four, m1 is "best"
+
+## Exercises Lattice data
+
+#### Compare the results of the simple linear regression with the spatial error model
+
+```{r}
+library(sf)
+data(pol_pres15, package = "spDataLarge")
+pol_pres15 <- st_make_valid(pol_pres15)
+library(spdep)
+pol_pres15 |> poly2nb(queen = TRUE) -> nb_q
+(nb_q |> nb2listw(style = "B") -> lw_q_B)
+form = I_turnout ~ I_entitled_to_vote
+(lm0 <- lm(form, pol_pres15)) |> summary()
+library(spatialreg)
+SEM_pres <- errorsarlm(form, data = pol_pres15, Durbin = FALSE,
+      listw = lw_q_B, zero.policy = TRUE) 
+SEM_pres |> summary()
+```
+
+The effect of `I_entitled_to_vote` is smaller and less significant in the spatial
+error model, the sign is identical. The spatial effect has "consumed" some of the
+variability in the data.
+
+#### Compare the maps of residuals of both models
+
+```{r}
+pol_pres15$res_lm = residuals(lm0)
+plot(pol_pres15["res_lm"])
+pol_pres15$res_lme = residuals(SEM_pres)
+plot(pol_pres15["res_lme"])
+```
+
+
+#### Fit a spatial Durbin error model (SDEM), using `Durbin = TRUE` in the same call to `errorsarlm`; compare the output of the Spatial Durbin model with that of the error model.
+
+```{r}
+SEM_pres_d <- errorsarlm(form, data = pol_pres15, Durbin = TRUE,
+      listw = lw_q_B, zero.policy = TRUE) 
+SEM_pres_d |> summary()
+```
+
+We see a larger and more significant effect of `I_entitled_to_vote`, and also significant effects
+of lagged intercept and lagged predictor.
+
+#### carry out a likelyhood ratio test to compare the SEM and SDEM models (`lmtest::lrtest()`, see the SDS book Ch 17)
+
+```{r}
+lmtest::lrtest(SEM_pres, SEM_pres_d)
+```
+
+The LR test suggest there is a significant improvement.
