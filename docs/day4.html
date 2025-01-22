@@ -236,7 +236,7 @@ window.Quarto = {
 </header><section id="point-patterns" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="point-patterns">
 <span class="header-section-number">4.1</span> point patterns:</h2>
 <section id="fitting-models" class="level3"><h3 class="anchored" data-anchor-id="fitting-models">Fitting models</h3>
-<p>Here, we fit a model to an inhomogeneous Poisson point process:</p>
+<p>After generating the CRS and inhom. Poisson patterns:</p>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://spatstat.org/">spatstat</a></span><span class="op">)</span></span>
 <span><span class="co"># Loading required package: spatstat.data</span></span>
@@ -258,8 +258,24 @@ window.Quarto = {
 <span><span class="co"># spatstat 3.3-0 </span></span>
 <span><span class="co"># For an introduction to spatstat, type 'beginner'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1357</span><span class="op">)</span></span>
-<span><span class="va">ppi</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rpoispp.html">rpoispp</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">...</span><span class="op">)</span> <span class="fl">500</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="co"># assuming Inhomogeneous Poisson:</span></span>
+<span><span class="va">CRS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rpoispp.html">rpoispp</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="va">ppi</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rpoispp.html">rpoispp</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">...</span><span class="op">)</span> <span class="fl">500</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>we can fit an inhomogeneous Poisson point process to these patterns: # assuming Inhomogeneous Poisson:</p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/ppm.html">ppm</a></span><span class="op">(</span><span class="va">CRS</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="co"># Nonstationary Poisson process</span></span>
+<span><span class="co"># Fitted to point pattern dataset 'CRS'</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Log intensity:  ~x</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted trend coefficients:</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#       4.705      -0.143 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest   Zval</span></span>
+<span><span class="co"># (Intercept)    4.705 0.194   4.326   5.085   *** 24.291</span></span>
+<span><span class="co"># x             -0.143 0.342  -0.812   0.527       -0.418</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/ppm.html">ppm</a></span><span class="op">(</span><span class="va">ppi</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co"># Nonstationary Poisson process</span></span>
 <span><span class="co"># Fitted to point pattern dataset 'ppi'</span></span>
@@ -268,46 +284,373 @@ window.Quarto = {
 <span><span class="co"># </span></span>
 <span><span class="co"># Fitted trend coefficients:</span></span>
 <span><span class="co"># (Intercept)           x </span></span>
-<span><span class="co">#        4.35        2.06 </span></span>
+<span><span class="co">#        4.23        2.14 </span></span>
 <span><span class="co"># </span></span>
 <span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest  Zval</span></span>
-<span><span class="co"># (Intercept)     4.35 0.170    4.02    4.68   *** 25.64</span></span>
-<span><span class="co"># x               2.06 0.239    1.59    2.53   ***  8.62</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co"># (Intercept)     4.23 0.177    3.89    4.58   *** 23.87</span></span>
+<span><span class="co"># x               2.14 0.248    1.66    2.63   ***  8.64</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>and to an Inhomogeneous clustered point process:</p>
+<p>or fit an Inhomogeneous clustered point process to data:</p>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1357</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1357</span><span class="op">)</span></span>
 <span><span class="va">ff</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="fl">10</span> <span class="op">*</span> <span class="va">x</span></span>
 <span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.geom/man/as.im.html">as.im</a></span><span class="op">(</span><span class="va">ff</span>, <span class="fu"><a href="https://rdrr.io/pkg/spatstat.geom/man/owin.html">owin</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rMatClust.html">rMatClust</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0.05</span>, <span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spatstat.random/man/rThomas.html">rThomas</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0.05</span>, <span class="va">Z</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># assuming Inhomogeneous clustered:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/kppm.html">kppm</a></span><span class="op">(</span><span class="va">Y</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># assuming Inhomogeneous clustered, Thomas process:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/kppm.html">kppm</a></span><span class="op">(</span><span class="va">CRS</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Inhomogeneous cluster point process model</span></span>
+<span><span class="co"># Fitted to point pattern dataset 'CRS'</span></span>
+<span><span class="co"># Fitted by minimum contrast</span></span>
+<span><span class="co">#   Summary statistic: inhomogeneous K-function</span></span>
+<span><span class="co"># Minimum contrast fit (object of class "minconfit")</span></span>
+<span><span class="co"># Model: Thomas process</span></span>
+<span><span class="co"># Fitted by matching theoretical K function to CRS</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Internal parameters fitted by minimum contrast ($par):</span></span>
+<span><span class="co">#    kappa   sigma2 </span></span>
+<span><span class="co"># 1.46e+06 2.36e+01 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted cluster parameters:</span></span>
+<span><span class="co">#    kappa    scale </span></span>
+<span><span class="co"># 1.46e+06 4.86e+00 </span></span>
+<span><span class="co"># Mean cluster size:  [pixel image]</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Converged successfully after 47 function evaluations</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Starting values of parameters:</span></span>
+<span><span class="co">#    kappa   sigma2 </span></span>
+<span><span class="co"># 1.03e+02 8.98e-03 </span></span>
+<span><span class="co"># Domain of integration: [ 0 , 0.25 ]</span></span>
+<span><span class="co"># Exponents: p= 2, q= 0.25</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- TREND  -----</span></span>
+<span><span class="co"># Point process model</span></span>
+<span><span class="co"># Fitted to data: X</span></span>
+<span><span class="co"># Fitting method: maximum likelihood (Berman-Turner approximation)</span></span>
+<span><span class="co"># Model was fitted using glm()</span></span>
+<span><span class="co"># Algorithm converged</span></span>
+<span><span class="co"># Call:</span></span>
+<span><span class="co"># ppm.ppp(Q = X, trend = trend, rename.intercept = FALSE, covariates = covariates, </span></span>
+<span><span class="co">#     covfunargs = covfunargs, use.gam = use.gam, forcefit = TRUE, </span></span>
+<span><span class="co">#     improve.type = ppm.improve.type, improve.args = ppm.improve.args, </span></span>
+<span><span class="co">#     nd = nd, eps = eps)</span></span>
+<span><span class="co"># Edge correction: "border"</span></span>
+<span><span class="co">#   [border correction distance r = 0 ]</span></span>
+<span><span class="co"># --------------------------------------------------------------------</span></span>
+<span><span class="co"># Quadrature scheme (Berman-Turner) = data + dummy + weights</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Data pattern:</span></span>
+<span><span class="co"># Planar point pattern:  103 points</span></span>
+<span><span class="co"># Average intensity 103 points per square unit</span></span>
+<span><span class="co"># Window: rectangle = [0, 1] x [0, 1] units</span></span>
+<span><span class="co"># Window area = 1 square unit</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Dummy quadrature points:</span></span>
+<span><span class="co">#      32 x 32 grid of dummy points, plus 4 corner points</span></span>
+<span><span class="co">#      dummy spacing: 0.0312 units</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Original dummy parameters: =</span></span>
+<span><span class="co"># Planar point pattern:  1028 points</span></span>
+<span><span class="co"># Average intensity 1030 points per square unit</span></span>
+<span><span class="co"># Window: rectangle = [0, 1] x [0, 1] units</span></span>
+<span><span class="co"># Window area = 1 square unit</span></span>
+<span><span class="co"># Quadrature weights:</span></span>
+<span><span class="co">#      (counting weights based on 32 x 32 array of rectangular tiles)</span></span>
+<span><span class="co"># All weights:</span></span>
+<span><span class="co">#   range: [0.000244, 0.000977] total: 1</span></span>
+<span><span class="co"># Weights on data points:</span></span>
+<span><span class="co">#   range: [0.000244, 0.000488] total: 0.0483</span></span>
+<span><span class="co"># Weights on dummy points:</span></span>
+<span><span class="co">#   range: [0.000244, 0.000977] total: 0.952</span></span>
+<span><span class="co"># --------------------------------------------------------------------</span></span>
+<span><span class="co"># FITTED :</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Nonstationary Poisson process</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ---- Intensity: ----</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Log intensity: ~x</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted trend coefficients:</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#       4.705      -0.143 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest   Zval</span></span>
+<span><span class="co"># (Intercept)    4.705 0.194   4.326   5.085   *** 24.291</span></span>
+<span><span class="co"># x             -0.143 0.342  -0.812   0.527       -0.418</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- gory details -----</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted regular parameters (theta):</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#       4.705      -0.143 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted exp(theta):</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#     110.521       0.867 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- CLUSTER  -----------</span></span>
+<span><span class="co"># Model: Thomas process</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted cluster parameters:</span></span>
+<span><span class="co">#    kappa    scale </span></span>
+<span><span class="co"># 1.46e+06 4.86e+00 </span></span>
+<span><span class="co"># Mean cluster size:  [pixel image]</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Final standard error and CI</span></span>
+<span><span class="co"># (allowing for correlation of cluster process):</span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest   Zval</span></span>
+<span><span class="co"># (Intercept)    4.705 0.194   4.326   5.085   *** 24.291</span></span>
+<span><span class="co"># x             -0.143 0.342  -0.812   0.527       -0.418</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- cluster strength indices ----------</span></span>
+<span><span class="co"># Mean sibling probability 2.31e-09</span></span>
+<span><span class="co"># Count overdispersion index (on original window): 1</span></span>
+<span><span class="co"># Cluster strength: 2.31e-09</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Spatial persistence index (over window): 0.979</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Bound on distance from Poisson process (over window): 2.66e-05</span></span>
+<span><span class="co">#    = min (1, 0.0156, 0.0073, 2.66e-05, 0.00495)</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># &gt;&gt;&gt; The Poisson process is a better fit &lt;&lt;&lt;</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/kppm.html">kppm</a></span><span class="op">(</span><span class="va">ppi</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Inhomogeneous cluster point process model</span></span>
+<span><span class="co"># Fitted to point pattern dataset 'ppi'</span></span>
+<span><span class="co"># Fitted by minimum contrast</span></span>
+<span><span class="co">#   Summary statistic: inhomogeneous K-function</span></span>
+<span><span class="co"># Minimum contrast fit (object of class "minconfit")</span></span>
+<span><span class="co"># Model: Thomas process</span></span>
+<span><span class="co"># Fitted by matching theoretical K function to ppi</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Internal parameters fitted by minimum contrast ($par):</span></span>
+<span><span class="co">#    kappa   sigma2 </span></span>
+<span><span class="co"># 1.76e+03 5.85e-03 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted cluster parameters:</span></span>
+<span><span class="co">#    kappa    scale </span></span>
+<span><span class="co"># 1.76e+03 7.65e-02 </span></span>
+<span><span class="co"># Mean cluster size:  [pixel image]</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Converged successfully after 47 function evaluations</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Starting values of parameters:</span></span>
+<span><span class="co">#    kappa   sigma2 </span></span>
+<span><span class="co"># 2.42e+02 4.14e-03 </span></span>
+<span><span class="co"># Domain of integration: [ 0 , 0.25 ]</span></span>
+<span><span class="co"># Exponents: p= 2, q= 0.25</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- TREND  -----</span></span>
+<span><span class="co"># Point process model</span></span>
+<span><span class="co"># Fitted to data: X</span></span>
+<span><span class="co"># Fitting method: maximum likelihood (Berman-Turner approximation)</span></span>
+<span><span class="co"># Model was fitted using glm()</span></span>
+<span><span class="co"># Algorithm converged</span></span>
+<span><span class="co"># Call:</span></span>
+<span><span class="co"># ppm.ppp(Q = X, trend = trend, rename.intercept = FALSE, covariates = covariates, </span></span>
+<span><span class="co">#     covfunargs = covfunargs, use.gam = use.gam, forcefit = TRUE, </span></span>
+<span><span class="co">#     improve.type = ppm.improve.type, improve.args = ppm.improve.args, </span></span>
+<span><span class="co">#     nd = nd, eps = eps)</span></span>
+<span><span class="co"># Edge correction: "border"</span></span>
+<span><span class="co">#   [border correction distance r = 0 ]</span></span>
+<span><span class="co"># --------------------------------------------------------------------</span></span>
+<span><span class="co"># Quadrature scheme (Berman-Turner) = data + dummy + weights</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Data pattern:</span></span>
+<span><span class="co"># Planar point pattern:  242 points</span></span>
+<span><span class="co"># Average intensity 242 points per square unit</span></span>
+<span><span class="co"># Window: rectangle = [0, 1] x [0, 1] units</span></span>
+<span><span class="co"># Window area = 1 square unit</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Dummy quadrature points:</span></span>
+<span><span class="co">#      40 x 40 grid of dummy points, plus 4 corner points</span></span>
+<span><span class="co">#      dummy spacing: 0.025 units</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Original dummy parameters: =</span></span>
+<span><span class="co"># Planar point pattern:  1604 points</span></span>
+<span><span class="co"># Average intensity 1600 points per square unit</span></span>
+<span><span class="co"># Window: rectangle = [0, 1] x [0, 1] units</span></span>
+<span><span class="co"># Window area = 1 square unit</span></span>
+<span><span class="co"># Quadrature weights:</span></span>
+<span><span class="co">#      (counting weights based on 40 x 40 array of rectangular tiles)</span></span>
+<span><span class="co"># All weights:</span></span>
+<span><span class="co">#   range: [0.000156, 0.000625] total: 1</span></span>
+<span><span class="co"># Weights on data points:</span></span>
+<span><span class="co">#   range: [0.000156, 0.000312] total: 0.072</span></span>
+<span><span class="co"># Weights on dummy points:</span></span>
+<span><span class="co">#   range: [0.000156, 0.000625] total: 0.928</span></span>
+<span><span class="co"># --------------------------------------------------------------------</span></span>
+<span><span class="co"># FITTED :</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Nonstationary Poisson process</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ---- Intensity: ----</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Log intensity: ~x</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted trend coefficients:</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#        4.23        2.14 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest  Zval</span></span>
+<span><span class="co"># (Intercept)     4.23 0.177    3.89    4.58   *** 23.87</span></span>
+<span><span class="co"># x               2.14 0.248    1.66    2.63   ***  8.64</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- gory details -----</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted regular parameters (theta):</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#        4.23        2.14 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted exp(theta):</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#       68.91        8.53 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- CLUSTER  -----------</span></span>
+<span><span class="co"># Model: Thomas process</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted cluster parameters:</span></span>
+<span><span class="co">#    kappa    scale </span></span>
+<span><span class="co"># 1.76e+03 7.65e-02 </span></span>
+<span><span class="co"># Mean cluster size:  [pixel image]</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Final standard error and CI</span></span>
+<span><span class="co"># (allowing for correlation of cluster process):</span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest  Zval</span></span>
+<span><span class="co"># (Intercept)     4.23 0.183    3.87    4.59   *** 23.12</span></span>
+<span><span class="co"># x               2.14 0.259    1.64    2.65   ***  8.28</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- cluster strength indices ----------</span></span>
+<span><span class="co"># Mean sibling probability 0.00766</span></span>
+<span><span class="co"># Count overdispersion index (on original window): 1.14</span></span>
+<span><span class="co"># Cluster strength: 0.00772</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Spatial persistence index (over window): 0</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Bound on distance from Poisson process (over window): 1</span></span>
+<span><span class="co">#    = min (1, 136, 485, 155000, 21.3)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/spatstat.model/man/kppm.html">kppm</a></span><span class="op">(</span><span class="va">Y</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Inhomogeneous cluster point process model</span></span>
 <span><span class="co"># Fitted to point pattern dataset 'Y'</span></span>
 <span><span class="co"># Fitted by minimum contrast</span></span>
 <span><span class="co">#   Summary statistic: inhomogeneous K-function</span></span>
+<span><span class="co"># Minimum contrast fit (object of class "minconfit")</span></span>
+<span><span class="co"># Model: Thomas process</span></span>
+<span><span class="co"># Fitted by matching theoretical K function to Y</span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># Log intensity:  ~x</span></span>
+<span><span class="co"># Internal parameters fitted by minimum contrast ($par):</span></span>
+<span><span class="co">#    kappa   sigma2 </span></span>
+<span><span class="co"># 22.69515  0.00808 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted cluster parameters:</span></span>
+<span><span class="co">#   kappa   scale </span></span>
+<span><span class="co"># 22.6951  0.0899 </span></span>
+<span><span class="co"># Mean cluster size:  [pixel image]</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Converged successfully after 93 function evaluations</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Starting values of parameters:</span></span>
+<span><span class="co">#    kappa   sigma2 </span></span>
+<span><span class="co"># 4.41e+02 1.84e-03 </span></span>
+<span><span class="co"># Domain of integration: [ 0 , 0.25 ]</span></span>
+<span><span class="co"># Exponents: p= 2, q= 0.25</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- TREND  -----</span></span>
+<span><span class="co"># Point process model</span></span>
+<span><span class="co"># Fitted to data: X</span></span>
+<span><span class="co"># Fitting method: maximum likelihood (Berman-Turner approximation)</span></span>
+<span><span class="co"># Model was fitted using glm()</span></span>
+<span><span class="co"># Algorithm converged</span></span>
+<span><span class="co"># Call:</span></span>
+<span><span class="co"># ppm.ppp(Q = X, trend = trend, rename.intercept = FALSE, covariates = covariates, </span></span>
+<span><span class="co">#     covfunargs = covfunargs, use.gam = use.gam, forcefit = TRUE, </span></span>
+<span><span class="co">#     improve.type = ppm.improve.type, improve.args = ppm.improve.args, </span></span>
+<span><span class="co">#     nd = nd, eps = eps)</span></span>
+<span><span class="co"># Edge correction: "border"</span></span>
+<span><span class="co">#   [border correction distance r = 0 ]</span></span>
+<span><span class="co"># --------------------------------------------------------------------</span></span>
+<span><span class="co"># Quadrature scheme (Berman-Turner) = data + dummy + weights</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Data pattern:</span></span>
+<span><span class="co"># Planar point pattern:  441 points</span></span>
+<span><span class="co"># Average intensity 441 points per square unit</span></span>
+<span><span class="co"># Window: rectangle = [0, 1] x [0, 1] units</span></span>
+<span><span class="co"># Window area = 1 square unit</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Dummy quadrature points:</span></span>
+<span><span class="co">#      50 x 50 grid of dummy points, plus 4 corner points</span></span>
+<span><span class="co">#      dummy spacing: 0.02 units</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Original dummy parameters: =</span></span>
+<span><span class="co"># Planar point pattern:  2504 points</span></span>
+<span><span class="co"># Average intensity 2500 points per square unit</span></span>
+<span><span class="co"># Window: rectangle = [0, 1] x [0, 1] units</span></span>
+<span><span class="co"># Window area = 1 square unit</span></span>
+<span><span class="co"># Quadrature weights:</span></span>
+<span><span class="co">#      (counting weights based on 50 x 50 array of rectangular tiles)</span></span>
+<span><span class="co"># All weights:</span></span>
+<span><span class="co">#   range: [8e-05, 4e-04]   total: 1</span></span>
+<span><span class="co"># Weights on data points:</span></span>
+<span><span class="co">#   range: [8e-05, 2e-04]   total: 0.0803</span></span>
+<span><span class="co"># Weights on dummy points:</span></span>
+<span><span class="co">#   range: [8e-05, 4e-04]   total: 0.92</span></span>
+<span><span class="co"># --------------------------------------------------------------------</span></span>
+<span><span class="co"># FITTED :</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Nonstationary Poisson process</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ---- Intensity: ----</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Log intensity: ~x</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># Fitted trend coefficients:</span></span>
 <span><span class="co"># (Intercept)           x </span></span>
-<span><span class="co">#       3.220       0.874 </span></span>
+<span><span class="co">#        5.35        1.33 </span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># Cluster model: Thomas process</span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest  Zval</span></span>
+<span><span class="co"># (Intercept)     5.35 0.115   5.123    5.57   *** 46.48</span></span>
+<span><span class="co"># x               1.33 0.172   0.997    1.67   ***  7.75</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- gory details -----</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted regular parameters (theta):</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#        5.35        1.33 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Fitted exp(theta):</span></span>
+<span><span class="co"># (Intercept)           x </span></span>
+<span><span class="co">#       210.3         3.8 </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- CLUSTER  -----------</span></span>
+<span><span class="co"># Model: Thomas process</span></span>
+<span><span class="co"># </span></span>
 <span><span class="co"># Fitted cluster parameters:</span></span>
 <span><span class="co">#   kappa   scale </span></span>
-<span><span class="co"># 11.7203  0.0199 </span></span>
+<span><span class="co"># 22.6951  0.0899 </span></span>
 <span><span class="co"># Mean cluster size:  [pixel image]</span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># Cluster strength: phi =  17.1</span></span>
-<span><span class="co"># Sibling probability: psib =  0.9447</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co"># Final standard error and CI</span></span>
+<span><span class="co"># (allowing for correlation of cluster process):</span></span>
+<span><span class="co">#             Estimate  S.E. CI95.lo CI95.hi Ztest  Zval</span></span>
+<span><span class="co"># (Intercept)     5.35 0.382   4.600    6.10   *** 14.01</span></span>
+<span><span class="co"># x               1.33 0.619   0.121    2.55     *  2.15</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ----------- cluster strength indices ----------</span></span>
+<span><span class="co"># Mean sibling probability 0.303</span></span>
+<span><span class="co"># Count overdispersion index (on original window): 18.4</span></span>
+<span><span class="co"># Cluster strength: 0.434</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Spatial persistence index (over window): 0</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Bound on distance from Poisson process (over window): 1</span></span>
+<span><span class="co">#    = min (1, 882, 93000, 2.1e+07, 291)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="maxent-and-species-distribution-modelling" class="level3"><h3 class="anchored" data-anchor-id="maxent-and-species-distribution-modelling">MaxEnt and species distribution modelling</h3>
 <p>MaxEnt is a popular software for species distribution modelling in ecology. <a href="https://biodiversityinformatics.amnh.org/open_source/maxent/">MaxEnt</a> fits an <a href="https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049">inhomogeneous Poisson process</a></p>
@@ -330,7 +673,7 @@ window.Quarto = {
 <span class="header-section-number">4.2</span> geostatistics</h2>
 <section id="kriging-interpolation" class="level3"><h3 class="anchored" data-anchor-id="kriging-interpolation">kriging interpolation</h3>
 <div class="cell">
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
 <span><span class="co"># Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span></span>
 <span><span class="va">no2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"external/no2.csv"</span>,</span>
 <span>    package <span class="op">=</span> <span class="st">"gstat"</span><span class="op">)</span><span class="op">)</span></span>
@@ -341,7 +684,7 @@ window.Quarto = {
 </div>
 <p>Fit a variogram model:</p>
 <div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The sample variogram:</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The sample variogram:</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/gstat/">gstat</a></span><span class="op">)</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># Attaching package: 'gstat'</span></span>
@@ -349,17 +692,7 @@ window.Quarto = {
 <span><span class="co"># </span></span>
 <span><span class="co">#     idw</span></span>
 <span><span class="va">v</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/variogram.html">variogram</a></span><span class="op">(</span><span class="va">NO2</span><span class="op">~</span><span class="fl">1</span>, <span class="va">no2.sf</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>fit a model, e.g.&nbsp;an exponential model:</p>
-<div class="cell">
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">v.fit</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/fit.variogram.html">fit.variogram</a></span><span class="op">(</span><span class="va">v</span>, <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/vgm.html">vgm</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"Exp"</span>, <span class="fl">50000</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">v.fit</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/fit.variogram.html">fit.variogram</a></span><span class="op">(</span><span class="va">v</span>, <span class="fu"><a href="https://r-spatial.github.io/gstat/reference/vgm.html">vgm</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"Exp"</span>, <span class="fl">50000</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">v</span>, <span class="va">v.fit</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
@@ -402,54 +735,13 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Density or interpolation?
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Both density maps shown in the Point Pattern section and interpolated maps shown in this section look very similar:</p>
-<ul>
-<li>raster maps with continuous values</li>
-<li>smooth spatial patterns</li>
-</ul>
-<p>The differences could not be larger!</p>
-<ul>
-<li>point density estimates estimate the number of points per unit area; the values are (normalized) <em>counts</em>
-</li>
-<li>interpolated maps estimate an unmeasured continuous variable; the values are weighted averages of an <em>attribute</em>
-</li>
-</ul>
-</div>
-</div>
-<p>To illustrate the difference between density and interpolated values:</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
 </section></section></section><section id="kriging-with-a-non-constant-mean" class="level2" data-number="4.3"><h2 data-number="4.3" class="anchored" data-anchor-id="kriging-with-a-non-constant-mean">
 <span class="header-section-number">4.3</span> Kriging with a non-constant mean</h2>
-<p>Under the model <span class="math inline">\(Z(s) = X(s)\beta + e(s)\)</span>, <span class="math inline">\(\beta\)</span> is estimated using generalized least squares, and the variogram of regression residuals is needed; see Ch 12.</p>
+<p>Under the model <span class="math inline">\(Z(s) = X(s)\beta + e(s)\)</span>, <span class="math inline">\(\beta\)</span> is estimated using generalized least squares, and the variogram of regression residuals is needed; see <a href="https://r-spatial.org/book/12-Interpolation.html#trend-models">SDS Ch 12.7</a>.</p>
 </section><section id="conditional-simulation" class="level2" data-number="4.4"><h2 data-number="4.4" class="anchored" data-anchor-id="conditional-simulation">
 <span class="header-section-number">4.4</span> Conditional simulation</h2>
 <section id="simulating-spatially-correlated-data" class="level3"><h3 class="anchored" data-anchor-id="simulating-spatially-correlated-data">Simulating spatially correlated data</h3>
-<p>Using a coarse grid, with base R:</p>
+<p>Using a coarse grid, with base R, using the Choleski decomposition algorithm:</p>
 <div class="cell">
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">13579</span><span class="op">)</span></span>
 <span><span class="va">g2c</span> <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html">st_as_stars</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html">st_bbox</a></span><span class="op">(</span><span class="va">de</span><span class="op">)</span>, dx <span class="op">=</span> <span class="fl">15000</span><span class="op">)</span></span>
@@ -468,7 +760,7 @@ Density or interpolation?
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">g3c</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="st">"equal"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -481,7 +773,7 @@ Density or interpolation?
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">v.fit</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -491,7 +783,7 @@ Density or interpolation?
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">v.fit</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">17.5</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -501,7 +793,7 @@ Density or interpolation?
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">v.fit</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">17.5</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -511,7 +803,7 @@ Density or interpolation?
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">g3c</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, <span class="va">mean</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -526,7 +818,7 @@ Density or interpolation?
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cs</span><span class="op">[</span>,,,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -539,7 +831,7 @@ Density or interpolation?
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">csm</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="st">"equal"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -549,7 +841,7 @@ Density or interpolation?
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">csv</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="st">"equal"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="day4_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -557,9 +849,11 @@ Density or interpolation?
 </section></section><section id="exercises" class="level2" data-number="4.5"><h2 data-number="4.5" class="anchored" data-anchor-id="exercises">
 <span class="header-section-number">4.5</span> Exercises</h2>
 <ol type="1">
-<li>What causes the differences between the mean and the variance of the simulations (left) and the mean and variance obtained by kriging (right)?</li>
-<li>When comparing (above) the sample variogram of simulated fields with the variogram model used to simulate them, where do you see differences? Can you explain why these are not identical, or hypothesize under which circumstances these would become (more) identical?</li>
-<li>Under which practical data analysis problem would conditional simulations be more useful than the kriging prediction + kriging variance maps?</li>
+<li>Try fitting homogeneous Poisson, inhomogeneous Poisson and clustered point process models to the hardcore pattern simulated on day 3.</li>
+<li>Using <code>krige.cv</code>, carry out a leave-one-out cross validation using the four fitted variogram models of day 3, and compute the root mean square prediction error for all four models. Which one is favourable in this respect?</li>
+<li>What causes the differences between the mean and the variance of the conditional simulations (left) and the mean and variance obtained by kriging (right)?</li>
+<li>When comparing (above) the sample variogram of simulated fields with the variogram model used to simulate them, where do you see differences? Can you explain why these are not identical, or hypothesize under which circumstances these would become more similar (or identical)?</li>
+<li>Under which practical data analysis problem would conditional simulations be more useful than the kriging prediction and kriging variance maps?</li>
 </ol>
 
 
@@ -1049,230 +1343,206 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitting models </span></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>Here, we fit a model to an inhomogeneous Poisson point process:</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>After generating the CRS and inhom. Poisson patterns:</span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1357</span>)</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>ppi <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="cf">function</span>(x,y,...) <span class="dv">500</span> <span class="sc">*</span> x)</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># assuming Inhomogeneous Poisson:</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ppm</span>(ppi, <span class="sc">~</span>x)</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>and to an Inhomogeneous clustered point process:</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1357</span>)</span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>ff <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y) <span class="dv">10</span> <span class="sc">*</span> x</span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">as.im</span>(ff, <span class="fu">owin</span>())</span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rMatClust</span>(<span class="dv">10</span>, <span class="fl">0.05</span>, Z)</span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Y)</span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="co"># assuming Inhomogeneous clustered:</span></span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="fu">kppm</span>(Y, <span class="sc">~</span>x)</span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### MaxEnt and species distribution modelling</span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>MaxEnt is a popular software for species distribution modelling in ecology.</span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">MaxEnt</span><span class="co">](https://biodiversityinformatics.amnh.org/open_source/maxent/)</span> fits an <span class="co">[</span><span class="ot">inhomogeneous Poisson process</span><span class="co">](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049)</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>Starting from presence (only) observations, it</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>adds background (absence) points, uniformly *in space*</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>fits logistic regression models to the 0/1 data, using environmental covariates</span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>ignores spatial interactions, spatial distances</span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>R package <span class="co">[</span><span class="ot">maxnet</span><span class="co">](https://cran.r-project.org/web/packages/maxnet/index.html)</span> does that using glmnet (lasso or elasticnet regularization on)</span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>A maxnet example <span class="co">[</span><span class="ot">using stars</span><span class="co">](https://github.com/BigelowLab/maxnet/wiki/stars)</span> is available in the development version, which can be installed directly from github by <span class="in">`remotes::install_github("mrmaxent/maxnet")`</span> ; and the same <span class="co">[</span><span class="ot">maxnet example using terra</span><span class="co">](https://github.com/BigelowLab/maxnet/wiki/terra)</span> (thanks to Ben Tupper).</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>CRS <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="dv">100</span>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>ppi <span class="ot">=</span> <span class="fu">rpoispp</span>(<span class="cf">function</span>(x,y,...) <span class="dv">500</span> <span class="sc">*</span> x)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>we can fit an inhomogeneous Poisson point process to these patterns:</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># assuming Inhomogeneous Poisson:</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ppm</span>(CRS, <span class="sc">~</span>x)</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ppm</span>(ppi, <span class="sc">~</span>x)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>or fit an Inhomogeneous clustered point process to data:</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1357</span>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>ff <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y) <span class="dv">10</span> <span class="sc">*</span> x</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">as.im</span>(ff, <span class="fu">owin</span>())</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rThomas</span>(<span class="dv">100</span>, <span class="fl">0.05</span>, Z)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Y)</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="co"># assuming Inhomogeneous clustered, Thomas process:</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="fu">kppm</span>(CRS, <span class="sc">~</span>x) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="fu">kppm</span>(ppi, <span class="sc">~</span>x) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a><span class="fu">kppm</span>(Y, <span class="sc">~</span>x) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="fu">### MaxEnt and species distribution modelling</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>MaxEnt is a popular software for species distribution modelling in ecology.</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">MaxEnt</span><span class="co">](https://biodiversityinformatics.amnh.org/open_source/maxent/)</span> fits an <span class="co">[</span><span class="ot">inhomogeneous Poisson process</span><span class="co">](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/ecog.03049)</span></span>
 <span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>Relevant papers:</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>Starting from presence (only) observations, it</span>
 <span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>a paper detailing the equivalence and differences between point pattern models and MaxEnt is found <span class="co">[</span><span class="ot">here</span><span class="co">](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12352)</span>.</span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">A statistical explanation of MaxEnt for Ecologists</span><span class="co">](https://doi.org/10.1111/j.1472-4642.2010.00725.x)</span></span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>adds background (absence) points, uniformly *in space*</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>fits logistic regression models to the 0/1 data, using environmental covariates</span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>ignores spatial interactions, spatial distances</span>
 <span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### fitting densities, simulating point patterns</span></span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>R package <span class="co">[</span><span class="ot">maxnet</span><span class="co">](https://cran.r-project.org/web/packages/maxnet/index.html)</span> does that using glmnet (lasso or elasticnet regularization on)</span>
 <span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>(see day 3 materials)</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>A maxnet example <span class="co">[</span><span class="ot">using stars</span><span class="co">](https://github.com/BigelowLab/maxnet/wiki/stars)</span> is available in the development version, which can be installed directly from github by <span class="in">`remotes::install_github("mrmaxent/maxnet")`</span> ; and the same <span class="co">[</span><span class="ot">maxnet example using terra</span><span class="co">](https://github.com/BigelowLab/maxnet/wiki/terra)</span> (thanks to Ben Tupper).</span>
 <span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a><span class="fu">##  geostatistics</span></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>Relevant papers:</span>
 <span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a><span class="fu">### kriging interpolation</span></span>
-<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>no2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">"external/no2.csv"</span>,</span>
-<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">package =</span> <span class="st">"gstat"</span>))</span>
-<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="st">"EPSG:32632"</span>) <span class="co"># a csv doesn't carry a CRS!</span></span>
-<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a><span class="fu">st_as_sf</span>(no2, <span class="at">crs =</span> <span class="st">"OGC:CRS84"</span>, <span class="at">coords =</span></span>
-<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"station_longitude_deg"</span>, <span class="st">"station_latitude_deg"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> no2.sf</span>
-<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>Fit a variogram model:</span>
-<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="co"># The sample variogram:</span></span>
-<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
-<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">variogram</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf)</span>
-<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v)</span>
-<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a>fit a model, e.g. an exponential model:</span>
-<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a>v.fit <span class="ot">=</span> <span class="fu">fit.variogram</span>(v, <span class="fu">vgm</span>(<span class="dv">1</span>, <span class="st">"Exp"</span>, <span class="dv">50000</span>))</span>
-<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v, v.fit)</span>
-<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>set up a prediction template:</span>
-<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a><span class="st">"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg"</span> <span class="sc">|&gt;</span></span>
-<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_sf</span>() <span class="sc">|&gt;</span></span>
-<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> de</span>
-<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
-<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>g2 <span class="ot">=</span> <span class="fu">st_as_stars</span>(<span class="fu">st_bbox</span>(de))</span>
-<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a>g3 <span class="ot">=</span> <span class="fu">st_crop</span>(g2, de)</span>
-<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IDW</span></span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>a paper detailing the equivalence and differences between point pattern models and MaxEnt is found <span class="co">[</span><span class="ot">here</span><span class="co">](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12352)</span>.</span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">A statistical explanation of MaxEnt for Ecologists</span><span class="co">](https://doi.org/10.1111/j.1472-4642.2010.00725.x)</span></span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a><span class="fu">### fitting densities, simulating point patterns</span></span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>(see day 3 materials)</span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a><span class="fu">##  geostatistics</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a><span class="fu">### kriging interpolation</span></span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>no2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">"external/no2.csv"</span>,</span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">package =</span> <span class="st">"gstat"</span>))</span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="st">"EPSG:32632"</span>) <span class="co"># a csv doesn't carry a CRS!</span></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="fu">st_as_sf</span>(no2, <span class="at">crs =</span> <span class="st">"OGC:CRS84"</span>, <span class="at">coords =</span></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"station_longitude_deg"</span>, <span class="st">"station_latitude_deg"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> no2.sf</span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a>Fit a variogram model:</span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a><span class="co"># The sample variogram:</span></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">variogram</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf)</span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a>v.fit <span class="ot">=</span> <span class="fu">fit.variogram</span>(v, <span class="fu">vgm</span>(<span class="dv">1</span>, <span class="st">"Exp"</span>, <span class="dv">50000</span>))</span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v, v.fit)</span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a>set up a prediction template:</span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a><span class="st">"https://github.com/edzer/sdsr/raw/main/data/de_nuts1.gpkg"</span> <span class="sc">|&gt;</span></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_sf</span>() <span class="sc">|&gt;</span></span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(crs) <span class="ot">-&gt;</span> de</span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
+<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a>g2 <span class="ot">=</span> <span class="fu">st_as_stars</span>(<span class="fu">st_bbox</span>(de))</span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a>g3 <span class="ot">=</span> <span class="fu">st_crop</span>(g2, de)</span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="fu">idw</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3) </span>
-<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a><span class="fu">#### BLUP/Kriging</span></span>
+<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IDW</span></span>
+<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="fu">idw</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3) </span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>Given this model, we can interpolate using the *best unbiased linear predictor* (BLUP), also called kriging predictor. Under the model $Z(s)=m+e(s)$ it estimates $m$ using generalized least squares, and predicts $e(s)$ using a weighted mean, where weights are chosen such that $Var(Z(s_0)-\hat{Z}(s_0))$ is minimized.</span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a><span class="fu">#### BLUP/Kriging</span></span>
 <span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit)</span>
-<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a>k<span class="sc">$</span>idw <span class="ot">=</span> i<span class="sc">$</span>var1.pred</span>
-<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a>k<span class="sc">$</span>kriging <span class="ot">=</span> k<span class="sc">$</span>var1.pred</span>
-<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a>hook <span class="ot">=</span> <span class="cf">function</span>() {</span>
-<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="fu">st_geometry</span>(no2.sf), <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'yellow'</span>)</span>
-<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="fu">st_cast</span>(<span class="fu">st_geometry</span>(de), <span class="st">"MULTILINESTRING"</span>), <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
-<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(k[<span class="fu">c</span>(<span class="st">"kriging"</span>, <span class="st">"idw"</span>)]), <span class="at">hook =</span> hook, <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
-<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Density or interpolation?</span></span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>Given this model, we can interpolate using the *best unbiased linear predictor* (BLUP), also called kriging predictor. Under the model $Z(s)=m+e(s)$ it estimates $m$ using generalized least squares, and predicts $e(s)$ using a weighted mean, where weights are chosen such that $Var(Z(s_0)-\hat{Z}(s_0))$ is minimized.</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit)</span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a>k<span class="sc">$</span>idw <span class="ot">=</span> i<span class="sc">$</span>var1.pred</span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a>k<span class="sc">$</span>kriging <span class="ot">=</span> k<span class="sc">$</span>var1.pred</span>
+<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a>hook <span class="ot">=</span> <span class="cf">function</span>() {</span>
+<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="fu">st_geometry</span>(no2.sf), <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'yellow'</span>)</span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="fu">st_cast</span>(<span class="fu">st_geometry</span>(de), <span class="st">"MULTILINESTRING"</span>), <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(k[<span class="fu">c</span>(<span class="st">"kriging"</span>, <span class="st">"idw"</span>)]), <span class="at">hook =</span> hook, <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a>Both density maps shown in the Point Pattern section and interpolated maps shown in this section look very similar:</span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a><span class="fu">## Kriging with a non-constant mean</span></span>
 <span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>raster maps with continuous values</span>
-<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>smooth spatial patterns</span>
-<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a>The differences could not be larger!</span>
-<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>point density estimates estimate the number of points per unit area; the values are (normalized) *counts*</span>
-<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>interpolated maps estimate an unmeasured continuous variable; the values are weighted averages of an *attribute*</span>
-<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a>To illustrate the difference between density and interpolated values:</span>
-<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
-<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a><span class="in">#| out.width: '100%'</span></span>
-<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a><span class="in">library(spatstat)</span></span>
-<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a><span class="in">p = as.ppp(st_geometry(no2.sf), W = as.owin(st_union(st_geometry(de))))</span></span>
-<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a><span class="in">density(p) |&gt; st_as_stars() |&gt; plot(main = "station density (# m^-2)", reset = FALSE)</span></span>
-<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a><span class="in">plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')</span></span>
-<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
-<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a><span class="in">#| out.width: '100%'</span></span>
-<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a><span class="in">plot(i, main = "interpolation: NO2 (ppm)", reset = FALSE)</span></span>
-<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a><span class="in">plot(st_geometry(no2.sf), add = TRUE, col = 'yellow')</span></span>
-<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## Kriging with a non-constant mean</span></span>
-<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a>Under the model $Z(s) = X(s)\beta + e(s)$, $\beta$ is estimated using generalized least squares, and the variogram of regression residuals is needed; see Ch 12.</span>
-<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conditional simulation</span></span>
-<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a><span class="fu">### Simulating spatially correlated data</span></span>
-<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>Using a coarse grid, with base R:</span>
-<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">13579</span>)</span>
-<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a>g2c <span class="ot">=</span> <span class="fu">st_as_stars</span>(<span class="fu">st_bbox</span>(de), <span class="at">dx =</span> <span class="dv">15000</span>)</span>
-<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a>g3c <span class="ot">=</span> <span class="fu">st_crop</span>(g2c, de)</span>
-<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">st_as_sf</span>(g3c, <span class="at">as_points =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">st_distance</span>(p)</span>
-<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">=</span> <span class="fu">variogramLine</span>(v.fit, <span class="at">covariance =</span> <span class="cn">TRUE</span>, <span class="at">dist_vector =</span> d)</span>
-<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">100</span></span>
-<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a>ch <span class="ot">=</span> <span class="fu">chol</span>(Sigma)</span>
-<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n <span class="sc">*</span> <span class="fu">nrow</span>(ch)), <span class="at">nrow =</span> n) <span class="sc">%*%</span> ch <span class="sc">+</span> <span class="fu">mean</span>(no2.sf<span class="sc">$</span>NO2)</span>
-<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(n)) {</span>
-<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">=</span> g3c[[<span class="dv">1</span>]]</span>
-<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a>    m[<span class="sc">!</span><span class="fu">is.na</span>(m)] <span class="ot">=</span> sim[i,]</span>
-<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a>    g3c[[ <span class="fu">paste0</span>(<span class="st">"sim"</span>, i) ]] <span class="ot">=</span> m</span>
-<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(g3c[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]), <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
-<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a>As a check, we could compute the variogram of some of the realisations:</span>
-<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a>g3c[<span class="st">"sim4"</span>] <span class="sc">|&gt;</span> </span>
-<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variogram</span>(sim4<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
-<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">model =</span> v.fit)</span>
-<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a>g3c[<span class="st">"sim5"</span>] <span class="sc">|&gt;</span> </span>
-<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variogram</span>(sim5<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
-<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">model =</span> v.fit, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">17.5</span>))</span>
-<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a>g3c[<span class="st">"sim6"</span>] <span class="sc">|&gt;</span> </span>
-<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variogram</span>(sim6<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
-<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">model =</span> v.fit, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">17.5</span>))</span>
-<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a>The mean of these simulations is constant, not related to measured values:</span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a>Under the model $Z(s) = X(s)\beta + e(s)$, $\beta$ is estimated using generalized least squares, and the variogram of regression residuals is needed; see <span class="co">[</span><span class="ot">SDS Ch 12.7</span><span class="co">](https://r-spatial.org/book/12-Interpolation.html#trend-models)</span>.</span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conditional simulation</span></span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a><span class="fu">### Simulating spatially correlated data</span></span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a>Using a coarse grid, with base R, using the Choleski decomposition algorithm:</span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">13579</span>)</span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a>g2c <span class="ot">=</span> <span class="fu">st_as_stars</span>(<span class="fu">st_bbox</span>(de), <span class="at">dx =</span> <span class="dv">15000</span>)</span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a>g3c <span class="ot">=</span> <span class="fu">st_crop</span>(g2c, de)</span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">st_as_sf</span>(g3c, <span class="at">as_points =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">st_distance</span>(p)</span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">=</span> <span class="fu">variogramLine</span>(v.fit, <span class="at">covariance =</span> <span class="cn">TRUE</span>, <span class="at">dist_vector =</span> d)</span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a>ch <span class="ot">=</span> <span class="fu">chol</span>(Sigma)</span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n <span class="sc">*</span> <span class="fu">nrow</span>(ch)), <span class="at">nrow =</span> n) <span class="sc">%*%</span> ch <span class="sc">+</span> <span class="fu">mean</span>(no2.sf<span class="sc">$</span>NO2)</span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(n)) {</span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">=</span> g3c[[<span class="dv">1</span>]]</span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a>    m[<span class="sc">!</span><span class="fu">is.na</span>(m)] <span class="ot">=</span> sim[i,]</span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a>    g3c[[ <span class="fu">paste0</span>(<span class="st">"sim"</span>, i) ]] <span class="ot">=</span> m</span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(g3c[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]), <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
+<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a>As a check, we could compute the variogram of some of the realisations:</span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a>g3c[<span class="st">"sim4"</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variogram</span>(sim4<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">model =</span> v.fit)</span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a>g3c[<span class="st">"sim5"</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variogram</span>(sim5<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">model =</span> v.fit, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">17.5</span>))</span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a>g3c[<span class="st">"sim6"</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variogram</span>(sim6<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> _) <span class="sc">|&gt;</span> </span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">model =</span> v.fit, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">17.5</span>))</span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a>The mean of these simulations is constant, not related to measured values:</span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a><span class="fu">st_apply</span>(<span class="fu">merge</span>(g3c[<span class="sc">-</span><span class="dv">1</span>]), <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), mean) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(no2.sf<span class="sc">$</span>NO2)</span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a>Conditioning simulations on measured values can be done with <span class="in">`gstat`</span>, using *conditional simulation*</span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a>cs <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit, <span class="at">nsim =</span> <span class="dv">50</span>, <span class="at">nmax =</span> <span class="dv">30</span>)</span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cs[,,,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a>We see that these simulations are much more alike; also their mean and variance resemble that of the kriging mean and variance:</span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a>csm <span class="ot">=</span> <span class="fu">st_apply</span>(cs, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), mean)</span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>csm<span class="sc">$</span>kriging <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit)[<span class="dv">1</span>]</span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(csm), <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">=</span> <span class="fu">st_apply</span>(cs, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), var)</span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a>csv<span class="sc">$</span>kr_var <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit)[<span class="dv">2</span>]</span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(csv), <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
+<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a><span class="fu">st_apply</span>(<span class="fu">merge</span>(g3c[<span class="sc">-</span><span class="dv">1</span>]), <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), mean) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span>
-<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(no2.sf<span class="sc">$</span>NO2)</span>
-<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a>Conditioning simulations on measured values can be done with <span class="in">`gstat`</span>, using *conditional simulation*</span>
-<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a>cs <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit, <span class="at">nsim =</span> <span class="dv">50</span>, <span class="at">nmax =</span> <span class="dv">30</span>)</span>
-<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cs[,,,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span>
-<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a>We see that these simulations are much more alike; also their mean and variance resemble that of the kriging mean and variance:</span>
-<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a>csm <span class="ot">=</span> <span class="fu">st_apply</span>(cs, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), mean)</span>
-<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a>csm<span class="sc">$</span>kriging <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit)[<span class="dv">1</span>]</span>
-<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(csm), <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
-<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">=</span> <span class="fu">st_apply</span>(cs, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), var)</span>
-<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a>csv<span class="sc">$</span>kr_var <span class="ot">=</span> <span class="fu">krige</span>(NO2<span class="sc">~</span><span class="dv">1</span>, no2.sf, g3, v.fit)[<span class="dv">2</span>]</span>
-<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">merge</span>(csv), <span class="at">breaks =</span> <span class="st">"equal"</span>)</span>
-<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>What causes the differences between the mean and the variance of</span>
-<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a>the simulations (left) and the mean and variance obtained by kriging</span>
-<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a>(right)?</span>
-<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>When comparing (above) the sample variogram of simulated fields</span>
-<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a>with the variogram model used to simulate them, where do you</span>
-<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a>see differences? Can you explain why these are not identical, or</span>
-<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a>hypothesize under which circumstances these would become (more)</span>
-<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a>identical?</span>
-<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Under which practical data analysis problem would conditional</span>
-<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a>simulations be more useful than the kriging prediction + kriging</span>
-<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a>variance maps?</span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Try fitting homogeneous Poisson, inhomogeneous Poisson and clustered point process</span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a>   models to the hardcore pattern simulated on day 3.</span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using <span class="in">`krige.cv`</span>, carry out a leave-one-out cross validation using</span>
+<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a>   the four fitted variogram models of day 3, and compute the root mean square prediction</span>
+<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a>   error for all four models. Which one is favourable in this respect?</span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>What causes the differences between the mean and the variance of</span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a>the conditional simulations (left) and the mean and variance obtained by kriging</span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a>(right)?</span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>When comparing (above) the sample variogram of simulated fields</span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a>with the variogram model used to simulate them, where do you</span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a>see differences? Can you explain why these are not identical, or</span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a>hypothesize under which circumstances these would become more similar (or</span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a>identical)?</span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Under which practical data analysis problem would conditional</span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a>simulations be more useful than the kriging prediction and kriging</span>
+<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a>variance maps?</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

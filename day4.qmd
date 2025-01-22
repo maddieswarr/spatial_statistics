@@ -4,26 +4,34 @@
 
 ### Fitting models 
 
-Here, we fit a model to an inhomogeneous Poisson point process:
+After generating the CRS and inhom. Poisson patterns:
 
 ```{r}
 library(spatstat)
 set.seed(1357)
+CRS = rpoispp(100)
 ppi = rpoispp(function(x,y,...) 500 * x)
+```
+
+we can fit an inhomogeneous Poisson point process to these patterns:
 # assuming Inhomogeneous Poisson:
+```{r}
+ppm(CRS, ~x)
 ppm(ppi, ~x)
 ```
 
-and to an Inhomogeneous clustered point process:
+or fit an Inhomogeneous clustered point process to data:
 
 ```{r}
 set.seed(1357)
 ff <- function(x,y) 10 * x
 Z <- as.im(ff, owin())
-Y <- rMatClust(10, 0.05, Z)
+Y <- rThomas(100, 0.05, Z)
 plot(Y)
-# assuming Inhomogeneous clustered:
-kppm(Y, ~x)
+# assuming Inhomogeneous clustered, Thomas process:
+kppm(CRS, ~x) |> summary()
+kppm(ppi, ~x) |> summary()
+kppm(Y, ~x) |> summary()
 ```
 
 ### MaxEnt and species distribution modelling
@@ -71,12 +79,6 @@ Fit a variogram model:
 # The sample variogram:
 library(gstat)
 v = variogram(NO2~1, no2.sf)
-plot(v)
-```
-
-fit a model, e.g. an exponential model:
-
-```{r}
 v.fit = fit.variogram(v, vgm(1, "Exp", 50000))
 plot(v, v.fit)
 ```
@@ -186,15 +188,20 @@ plot(merge(csv), breaks = "equal")
 
 ## Exercises
 
+1. Try fitting homogeneous Poisson, inhomogeneous Poisson and clustered point process
+   models to the hardcore pattern simulated on day 3.
+1. Using `krige.cv`, carry out a leave-one-out cross validation using
+   the four fitted variogram models of day 3, and compute the root mean square prediction
+   error for all four models. Which one is favourable in this respect?
 1. What causes the differences between the mean and the variance of
-the simulations (left) and the mean and variance obtained by kriging
+the conditional simulations (left) and the mean and variance obtained by kriging
 (right)?
 2. When comparing (above) the sample variogram of simulated fields
 with the variogram model used to simulate them, where do you
 see differences? Can you explain why these are not identical, or
-hypothesize under which circumstances these would become (more)
-identical?
+hypothesize under which circumstances these would become more similar (or
+identical)?
 3. Under which practical data analysis problem would conditional
-simulations be more useful than the kriging prediction + kriging
+simulations be more useful than the kriging prediction and kriging
 variance maps?
 
